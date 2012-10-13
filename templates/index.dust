@@ -1,0 +1,10 @@
+<p>Hello {adjective} world!</p>
+{?schemata}
+    <ul>
+        {#schemata}
+            <li>schema</li>
+        {/schemata}
+    </ul>
+{:else}
+    <p>Paste your Avro schema here:</p>
+{/schemata}
