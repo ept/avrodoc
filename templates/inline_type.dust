@@ -1,0 +1,26 @@
+{?is_record}
+    <a href="{link}">{name}</a>
+{/is_record}
+
+{?is_enum}
+    <a href="{link}">{name}</a>
+{/is_enum}
+
+{?is_array}
+    array&lt;{>inline_type:items/}&gt;
+{/is_array}
+
+{?is_map}
+    map&lt;{>inline_type:values/}&gt;
+{/is_map}
+
+{?is_union}
+    {#types}
+        {>inline_type:./}
+        {@sep}&nbsp;|&nbsp;{/sep}
+    {/types}
+{/is_union}
+
+{?is_primitive}
+    {type}
+{/is_primitive}

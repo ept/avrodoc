@@ -1,0 +1,35 @@
+{?namespace}<h2>{namespace}</h2>{/namespace}
+<h1>{name}</h1>
+
+{?doc}<div class="type-doc">{doc}</div>{/doc}
+
+{?is_record}
+    <h2>Fields</h2>
+    {?fields}
+        <table>
+            {#fields}
+                <tr>
+                    <td class="type">{>inline_type:type/}</td>
+                    <td class="field">{name}</td>
+                    {?doc}<td class="field-doc">{doc}</td>{/doc}
+                </tr>
+            {/fields}
+        </table>
+    {:else}
+        <p>This record has no fields.</p>
+    {/fields}
+{/is_record}
+
+{?is_enum}
+    <h2>Enum</h2>
+
+    {?symbols}
+        <ul>
+            {#symbols}
+                <li>{.}</li>
+            {/symbols}
+        </ul>
+    {:else}
+        <p>This enum has no symbols.</p>
+    {/symbols}
+{/is_enum}

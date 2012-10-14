@@ -1,5 +1,6 @@
 var express = require('express');
 var dust = require('dustjs-linkedin');
+require('dustjs-helpers');
 var http = require('http');
 var path = require('path');
 var fs = require('fs');

@@ -1,8 +1,28 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+#list-pane {
+  background: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 15px 0 30px 30px;
+  border-right: 1px solid #ddd;
+  box-shadow: 0 0 20px #ddd;
+  -webkit-box-shadow: 0 0 20px #ddd;
+  -moz-box-shadow: 0 0 20px #ddd;
+}
+
+#content-pane {
+  margin: 40px 0 50px 260px;
 }

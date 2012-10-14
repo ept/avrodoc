@@ -4,19 +4,21 @@
         <link rel="stylesheet" type="text/css" href="/stylesheets/style.css"/>
         <script type="text/javascript" src="/vendor/jquery-1.8.2.js"></script>
         <script type="text/javascript" src="/vendor/underscore-1.4.2.js"></script>
-        <script type="text/javascript" src="/vendor/avro-validator.js"></script>
         <script type="text/javascript" src="/vendor/dust-core-1.1.1.js"></script>
+        <script type="text/javascript" src="/vendor/dustjs-helpers-1.1.0.js"></script>
         <script type="text/javascript" src="/vendor/sammy-0.7.1.js"></script>
         <script type="text/javascript" src="/dust-templates.js"></script>
         <script type="text/javascript" src="/js/avrodoc.js"></script>
+        <script type="text/javascript" src="/js/schema.js"></script>
         <script type="text/javascript">
             jQuery(function () {
-                AvroDoc([{file: '/isb.json'}]);
+                window.avrodoc = AvroDoc([{filename: 'isb.avsc'}]);
             });
         </script>
     </head>
 
     <body>
-        <div id="container"></div>
+        <div id="list-pane"></div>
+        <div id="content-pane"></div>
     </body>
 </html>

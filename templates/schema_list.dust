@@ -1,0 +1,16 @@
+<ul>
+    {#schemata}
+        <li>
+            <p class="schema">
+                <a href="{root_type.link}">{root_type.name} ({filename})</a>
+            </p>
+            <ul>
+                {#sorted_types}
+                    <li><a href="{link}">{name}</a></li>
+                {/sorted_types}
+            </ul>
+        </li>
+    {/schemata}
+
+    <li>Paste a schema</li>
+</ul>
