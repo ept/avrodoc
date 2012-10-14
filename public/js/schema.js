@@ -85,10 +85,10 @@ AvroDoc.Schema = function (schema_json, filename) {
                     throw 'Unexpected value ' + JSON.stringify(schema.fields) + ' for record fields at ' + path;
                 }
                 schema.namespace = schema.namespace || namespace;
+                defineNamedType(qualifiedName(schema, namespace), schema, path);
                 _(schema.fields).each(function (field) {
                     field.type = parseSchema(field.type, schema.namespace, joinPath(path, field.name));
                 });
-                defineNamedType(qualifiedName(schema, namespace), schema, path);
                 return decorate(schema);
             } else if (schema.type === 'enum') {
                 if (!_(schema.symbols).isArray()) {
