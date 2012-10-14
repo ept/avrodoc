@@ -3,7 +3,7 @@ var http = require('http');
 var path = require('path');
 var content = require('./lib/static_content');
 
-var schemata = [{filename: 'isb.avsc'}]; // FIXME HACK
+var schemata = [{filename: 'example.avsc'}];
 
 // Precompile dust templates at app startup, and then serve them out of memory
 var dust_templates = content.dustTemplates();
