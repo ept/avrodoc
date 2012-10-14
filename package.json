@@ -7,10 +7,10 @@
     "start": "node app"
   },
   "dependencies": {
-    "express": "3.x",
-    "dustjs-linkedin": "*",
-    "dustjs-helpers": "*",
-    "less-middleware": "*"
+    "express": "3.0.0rc5",
+    "dustjs-linkedin": "1.1.1",
+    "dustjs-helpers": "1.1.0",
+    "less-middleware": "0.1.7"
   },
   "engines": {
     "node": "0.8.x",
