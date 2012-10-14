@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+
+var path = require('path'),
+    fs = require('fs'),
+    sys = require('util'),
+    content = require('../lib/static_content');
+
+var args = process.argv.slice(2); // argv[0] == node, argv[1] == avrodoc
+if (args.length === 0) {
+    sys.error('Usage: avrodoc schema1.avsc [schema2.avsc ...] > avrodoc.html');
+    process.exit(1);
+}
+
+function readJSON(filename) {
+    var json, parsed;
+    json = fs.readFileSync(path.resolve(process.cwd(), filename), 'utf-8');
+    try {
+        parsed = JSON.parse(json);
+    } catch (e) {
+        sys.error('Not a valid json file: ' + filename);
+        process.exit(1);
+    }
+    return parsed;
+}
+
+var schemata = args.map(function (filename) {
+    return {json: readJSON(filename), filename: filename};
+});
+
+content.topLevelHTML({inline: true, schemata: schemata}, function (err, html) {
+    if (err) throw err;
+    sys.puts(html);
+});

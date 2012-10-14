@@ -1,9 +1,12 @@
 var express = require('express');
-var dust = require('dustjs-linkedin');
-require('dustjs-helpers');
 var http = require('http');
 var path = require('path');
-var fs = require('fs');
+var content = require('./lib/static_content');
+
+var schemata = [{filename: 'isb.avsc'}]; // FIXME HACK
+
+// Precompile dust templates at app startup, and then serve them out of memory
+var dust_templates = content.dustTemplates();
 
 var app = express();
 
@@ -17,28 +20,13 @@ app.configure(function(){
 });
 
 app.get('/', function (req, res, next) {
-    res.sendfile('./avrodoc.html');
+    content.topLevelHTML({schemata: schemata}, function (err, html) {
+        res.set('Content-Type', 'text/html').send(html);
+    });
 });
 
 app.get('/dust-templates.js', function (req, res, next) {
-    // TODO cache compiled templates
-    var compiled = '', to_do = 0, template_dir = path.join(__dirname, 'templates');
-    fs.readdir(template_dir, function (err, files) {
-        if (err) throw err;
-        files.forEach(function (file) {
-            if (file.match(/\.dust$/)) {
-                var file_path = path.join(template_dir, file);
-                console.log('Compiling ' + file_path);
-                to_do++;
-                fs.readFile(file_path, 'utf-8', function (err, template) {
-                    if (err) throw err;
-                    compiled += dust.compile(template, file.replace(/\.dust$/, ''));
-                    to_do--;
-                    if (to_do === 0) res.set('Content-Type', 'text/javascript').send(compiled);
-                });
-            }
-        });
-    });
+    res.set('Content-Type', 'text/javascript').send(dust_templates);
 });
 
 http.createServer(app).listen(app.get('port'), function () {

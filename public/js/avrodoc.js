@@ -23,7 +23,12 @@ function AvroDoc(input_schemata) {
         });
 
         Sammy(function () {
-            this.get('/', function () {
+            this.get('#/schema/:filename/:qualified_name', function () {
+                var schema = schema_by_name[this.params.filename];
+                showType(schema && schema.named_types[this.params.qualified_name]);
+            });
+
+            this.get('#/', function () {
                 if (_public.schemata.length === 1) {
                     showType(_public.schemata[0].root_type);
                 } else {
@@ -31,10 +36,9 @@ function AvroDoc(input_schemata) {
                 }
             });
 
-            this.get('/schema/:filename/:qualified_name', function () {
-                var schema = schema_by_name[this.params.filename];
-                showType(schema && schema.named_types[this.params.qualified_name]);
-            });
+            this.notFound = function () {
+                window.location.hash = '#/';
+            };
         }).run();
     }
 
@@ -57,7 +61,9 @@ function AvroDoc(input_schemata) {
 
     input_schemata = input_schemata || [];
     _(input_schemata).each(function (schema) {
-        if (schema.filename) {
+        if (schema.json) {
+            addSchema(schema.json, schema.filename);
+        } else if (schema.filename) {
             in_progress++;
             $.getJSON(schema.filename, function (json) {
                 addSchema(json, schema.filename);
@@ -66,8 +72,6 @@ function AvroDoc(input_schemata) {
                     ready();
                 }
             });
-        } else if (schema.json) {
-            addSchema(schema.json);
         } else {
             throw 'You must specify JSON or a filename for a schema';
         }
