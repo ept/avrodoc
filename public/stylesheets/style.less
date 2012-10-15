@@ -74,9 +74,13 @@
         font-weight: lighter;
 
         .label {
-          opacity: 0.5;
           margin-left: 4px;
           font-size: @smallFontSize;
+          text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
+          background-color: lighten(@grayLight, 25%);
+          &-info {
+            background-color: lighten(@infoText, 25%);
+          }
         }
 
         // Don't underline labels on hover
@@ -86,7 +90,10 @@
             text-decoration: underline;
           }
           .label {
-            opacity: 0.8;
+            background-color: lighten(@grayLight, 10%);
+            &-info {
+              background-color: lighten(@infoText, 10%);
+            }
           }
         }
       }
