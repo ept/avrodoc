@@ -24,6 +24,15 @@
 
   <body>
     <div id="list-pane"></div>
-    <div id="content-pane"></div>
+    <div id="container">
+      <div id="body">
+        <div id="content-pane"></div>
+      </div>
+      <div id="footer">
+        <div id="attribution">
+          Hello! This is <a href="https://github.com/ept/avrodoc" target="_blank">Avrodoc</a> :)
+        </div>
+      </div>
+    </div>
   </body>
 </html>

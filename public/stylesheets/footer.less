@@ -1,0 +1,38 @@
+// Footer that stays at the bottom of the page, based on
+// http://matthewjamestaylor.com/blog/keeping-footers-at-the-bottom-of-the-page
+
+@footerHeight: 28px;
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#container {
+  min-height: 100%;
+  position: relative;
+}
+
+#body {
+  padding-bottom: @footerHeight;
+}
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: @footerHeight;
+  line-height: @footerHeight;
+  text-align: right;
+
+  #attribution {
+    display: inline-block;
+    padding: 0 25px 0 12px;
+    .border-top-left-radius(6px);
+    .box-shadow(0 0 10px rgba(0, 0, 0, 0.1));
+    font-size: 11px;
+    color: fade(@textColor, 50%);
+    a { color: fade(@linkColor, 50%); }
+  }
+}

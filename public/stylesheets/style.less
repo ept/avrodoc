@@ -22,6 +22,9 @@
 @import "bootstrap/tooltip.less";
 @import "bootstrap/popovers.less";
 
+@import "footer.less";
+
+
 .vertical-scrolling() {
   overflow-x: hidden;
   overflow-y: auto;
@@ -31,6 +34,7 @@
 #list-pane {
   background: #f3f3f3;
   position: fixed;
+  z-index: 1;
   top: 0;
   left: 0;
   bottom: 0;
@@ -115,7 +119,7 @@
 }
 
 #content-pane {
-  margin: 11px 25px 50px 260px;
+  padding: 11px 25px 50px 260px;
 
   h2.namespace {
     font-size: @baseFontSize;
