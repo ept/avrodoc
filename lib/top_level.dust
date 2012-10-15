@@ -1,0 +1,22 @@
+{! This template is not in the templates directory as its rendered on the server,
+   whereas all the others are rendered in the brower. !}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>{title}</title>
+    {content|s}
+
+    <script type="text/javascript">
+       jQuery(function () {
+           window.avrodoc = AvroDoc({schemata|s});
+       });
+    </script>
+  </head>
+
+  <body>
+    <div id="list-pane"></div>
+    <div id="content-pane"></div>
+  </body>
+</html>
