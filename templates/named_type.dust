@@ -19,7 +19,7 @@
                 <tr>
                     <td class="type">{>inline_type:type/}</td>
                     <td class="field">{name}</td>
-                    {?doc}<td class="field-doc">{doc}</td>{/doc}
+                    <td class="field-doc">{doc}</td>
                 </tr>
             {/fields}
             </tbody>
