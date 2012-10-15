@@ -1,28 +1,130 @@
-body {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
-}
+// Fonts, colours etc.
+@import "variables.less";
 
-a {
-  color: #00B7FF;
+// Import a subset of Twitter Bootstrap
+@import "bootstrap/reset.less";
+@import "bootstrap/mixins.less";
+
+// Base CSS
+@import "bootstrap/scaffolding.less";
+@import "bootstrap/type.less";
+@import "bootstrap/code.less";
+@import "bootstrap/forms.less";
+@import "bootstrap/tables.less";
+
+// Components: Buttons & Alerts
+@import "bootstrap/buttons.less";
+@import "bootstrap/alerts.less"; // Note: alerts share common CSS with buttons and thus have styles in buttons.less
+@import "bootstrap/labels-badges.less";
+
+// Components: Popovers
+@import "bootstrap/modals.less";
+@import "bootstrap/tooltip.less";
+@import "bootstrap/popovers.less";
+
+.vertical-scrolling() {
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 #list-pane {
-  background: white;
+  background: #f3f3f3;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  width: 200px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 15px 0 30px 30px;
+  width: 230px;
+  .vertical-scrolling();
   border-right: 1px solid #ddd;
-  box-shadow: 0 0 20px #ddd;
-  -webkit-box-shadow: 0 0 20px #ddd;
-  -moz-box-shadow: 0 0 20px #ddd;
+  .box-shadow(0 0 20px #ddd);
+
+  ul {
+    list-style: none;
+    margin: 0;
+  }
+
+  & > ul > li {
+    padding: 15px 18px;
+
+    & > a {
+      display: block;
+      padding: 4px 0;
+      text-decoration: none;
+      .text-overflow();
+
+      .root-type {
+        font-size: 125%;
+        font-weight: bold;
+        color: @gray;
+      }
+
+      .filename {
+        font-size: @smallFontSize;
+        font-weight: lighter;
+        color: @grayLight;
+        padding-left: 6px;
+      }
+    }
+
+    & > ul > li {
+      a {
+        display: block;
+        padding: 4px 6px;
+        font-weight: lighter;
+
+        .label {
+          opacity: 0.5;
+          margin-left: 4px;
+          font-size: @smallFontSize;
+        }
+
+        // Don't underline labels on hover
+        &:hover {
+          text-decoration: none;
+          .type-name {
+            text-decoration: underline;
+          }
+          .label {
+            opacity: 0.8;
+          }
+        }
+      }
+
+      &.selected {
+        background: white;
+        .box-shadow(0 0 3px #ddd);
+        .border-radius(3px);
+      }
+    }
+  }
+
+  // If multiple schemata are present in the list, highlight the currently selected one.
+  // If there is only one schema, don't bother with the highlight, to reduce visual clutter.
+  & > ul.multiple-schemata > li.selected {
+    background: @blueDark;
+  }
 }
 
 #content-pane {
-  margin: 40px 0 50px 260px;
+  margin: 11px 25px 50px 260px;
+
+  h2.namespace {
+    font-size: @baseFontSize;
+    color: @gray;
+    margin: 0;
+  }
+  h1.type-name {
+    margin-top: 0;
+  }
+
+  .type-doc {
+    margin: @baseLineHeight 0;
+  }
+  table {
+    margin-top: @baseLineHeight;
+    td {
+      border-bottom: 1px solid @tableBorder;
+    }
+  }
 }

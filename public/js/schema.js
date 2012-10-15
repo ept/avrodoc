@@ -133,6 +133,7 @@ AvroDoc.Schema = function (schema_json, filename) {
     }
 
     _public.root_type = parseSchema(schema_json);
+    _public.root_type.is_root_type = true;
     _public.named_types = named_types;
 
     _public.sorted_types = _(named_types).values().sort(function (type1, type2) {

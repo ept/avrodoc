@@ -5,18 +5,26 @@ function AvroDoc(input_schemata) {
     var schema_by_name = {};
 
     function showType(type) {
+        list_pane.find('li').removeClass('selected');
+
         if (!type) {
             content_pane.empty();
         } else {
             dust.render('named_type', type, function (err, html) {
                 content_pane.html(html);
             });
+
+            // Mark the currently displayed type with a 'selected' CSS class in the type list
+            list_pane.find('a').filter(function () {
+                return $(this).attr('href') === type.link;
+            }).parents('li').addClass('selected');
         }
     }
 
     function ready() {
-        // Array of schema models
+        // Fields used by the schema_list template
         _public.schemata = _(schema_by_name).values();
+        _public.has_multiple_schemata = (_public.schemata.length > 1);
 
         dust.render('schema_list', _public, function (err, html) {
             list_pane.html(html);

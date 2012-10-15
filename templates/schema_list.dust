@@ -1,16 +1,19 @@
-<ul>
+<ul {?has_multiple_schemata} class="multiple-schemata" {/has_multiple_schemata}>
     {#schemata}
         <li>
-            <p class="schema">
-                <a href="{root_type.link}">{root_type.name} ({filename})</a>
-            </p>
+            <a href="{root_type.link}">
+                <span class="root-type">{root_type.name}</span>
+                <span class="filename">{filename}</span>
+            </a>
             <ul>
                 {#sorted_types}
-                    <li><a href="{link}">{name}</a></li>
+                    <li><a href="{link}">
+                        <span class="type-name">{name}</span>
+                        {?is_enum} <span class="label">Enum</span> {/is_enum}
+                        {?is_root_type} <span class="label label-info">Root</span> {/is_root_type}
+                    </a></li>
                 {/sorted_types}
             </ul>
         </li>
     {/schemata}
-
-    <li>Paste a schema</li>
 </ul>
