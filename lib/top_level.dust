@@ -6,6 +6,13 @@
   <head>
     <meta charset="UTF-8">
     <title>{title}</title>
+
+    {! iOS Safari treats the position:fixed sidebar very weirdly at non-default zoom levels,
+       so just disable zooming for now. It looks good on an iPad, but on an iPhone the text
+       is unreadably small. Allowing zoom wouldn't help though, because of the weird
+       position:fixed behaviour. If we want to support iPhone that'll need design thinking. !}
+    <meta name="viewport" content="width=1000, user-scalable=no">
+
     {content|s}
 
     <script type="text/javascript">
