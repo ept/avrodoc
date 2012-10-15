@@ -140,3 +140,22 @@
     }
   }
 }
+
+// Override some styles from bootstrap/popovers.less
+.popover.avrodoc-named-type {
+  width: 600px;
+
+  .popover-title {
+    .text-overflow();
+    .namespace { color: @gray; }
+    .type-name { font-weight: bold; }
+  }
+
+  .popover-content {
+    .vertical-scrolling();
+    font-size: 85%;
+    table th, table td {
+      padding: 4px 5px;
+    }
+  }
+}
