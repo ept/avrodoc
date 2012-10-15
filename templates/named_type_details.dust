@@ -27,14 +27,12 @@
 {/is_record}
 
 {?is_enum}
-    <h2>Enum</h2>
-
     {?symbols}
-        <ul>
-            {#symbols}
-                <li>{.}</li>
-            {/symbols}
-        </ul>
+        <p>Enum symbols:</p>
+        {#symbols}
+            <code>{.}</code>
+            {@sep}, {/sep}
+        {/symbols}
     {:else}
         <p>This enum has no symbols.</p>
     {/symbols}
