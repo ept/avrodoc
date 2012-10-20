@@ -113,7 +113,7 @@ AvroDoc.Schema = function (schema_json, filename) {
             } else if (_(primitive_types).contains(schema.type)) {
                 return decorate(schema);
             } else {
-                throw 'Unsupported Avro schema type ' + schema.type + ' at ' + path;
+                throw 'Unsupported Avro schema type "' + schema.type + '" at ' + path;
             }
         } else if (_schema.isArray()) {
             if (_schema.isEmpty()) {

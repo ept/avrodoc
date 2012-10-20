@@ -27,13 +27,13 @@ app.configure(function(){
     app.use(express.static(path.join(__dirname, 'public')));
 });
 
-app.get('/', function (req, res, next) {
+app.get('/', function (req, res) {
     content.topLevelHTML({schemata: schemata}, function (err, html) {
         res.set('Content-Type', 'text/html').send(html);
     });
 });
 
-app.get('/dust-templates.js', function (req, res, next) {
+app.get('/dust-templates.js', function (req, res) {
     res.set('Content-Type', 'text/javascript').send(dust_templates);
 });
 
