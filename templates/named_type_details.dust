@@ -37,3 +37,7 @@
         <p>This enum has no symbols.</p>
     {/symbols}
 {/is_enum}
+
+{?is_fixed}
+    <p>Fixed-length byte string ({size} bytes)</p>
+{/is_fixed}

@@ -6,6 +6,10 @@
     <a href="{link}">{name}</a>
 {/is_enum}
 
+{?is_fixed}
+    <a href="{link}">{name}</a>
+{/is_fixed}
+
 {?is_array}
     array&lt;{>inline_type:items/}&gt;
 {/is_array}

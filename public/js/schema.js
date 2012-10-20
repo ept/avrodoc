@@ -97,6 +97,13 @@ AvroDoc.Schema = function (schema_json, filename) {
                 schema.namespace = schema.namespace || namespace;
                 defineNamedType(qualifiedName(schema, schema.namespace), schema, path);
                 return decorate(schema);
+            } else if (schema.type === 'fixed') {
+                if (typeof schema.size !== 'number' || schema.size < 1) {
+                    throw 'Unexpected size ' + JSON.stringify(schema.size) + ' for fixed type at ' + path;
+                }
+                schema.namespace = schema.namespace || namespace;
+                defineNamedType(qualifiedName(schema, schema.namespace), schema, path);
+                return decorate(schema);
             } else if (schema.type === 'array') {
                 schema.items = parseSchema(schema.items, namespace, joinPath(path, 'items'));
                 return decorate(schema);
