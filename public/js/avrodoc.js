@@ -48,20 +48,26 @@ function AvroDoc(input_schemata) {
         });
     }
 
-    // Renders the details of the given type in the main content pane.
-    function showType(type) {
+    // Renders the named template with the given context and updates the content pane to show the
+    // result.
+    function renderContentPane(template, context) {
         // Clean up old content
         list_pane.find('li').removeClass('selected');
         $('body > .popover').remove();
         $('body').scrollTop(0);
 
+        dust.render(template, context, function (err, html) {
+            content_pane.html(html);
+            setupPopovers();
+        });
+    }
+
+    // Renders the details of the given type in the main content pane.
+    function showType(type) {
         if (!type) {
             content_pane.empty();
         } else {
-            dust.render('named_type', type, function (err, html) {
-                content_pane.html(html);
-                setupPopovers();
-            });
+            renderContentPane('named_type', type);
 
             // Mark the currently displayed type with a 'selected' CSS class in the type list
             list_pane.find('a').filter(function () {
@@ -91,7 +97,7 @@ function AvroDoc(input_schemata) {
                 if (_public.schemata.length === 1) {
                     showType(_public.schemata[0].root_type);
                 } else {
-                    content_pane.empty();
+                    renderContentPane('schema_file_list', _public);
                 }
             });
 

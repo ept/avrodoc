@@ -1,0 +1,27 @@
+<h1>Avrodoc</h1>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Root Type</th>
+            <th>Filename</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {#schemata}
+        <tr>
+            <td class="type">
+                {>inline_type:root_type/}
+            </td>
+            <td class="filename">
+                {filename}
+            </td>
+            <td class="root-type-doc">
+                {root_type.doc}
+            </td>
+        </tr>
+    {/schemata}
+    </tbody>
+</table>
