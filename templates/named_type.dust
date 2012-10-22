@@ -1,3 +1,10 @@
 {?namespace}<h2 class="namespace">{namespace}</h2>{/namespace}
 <h1 class="type-name">{name}</h1>
-{>named_type_details/}
+
+{?versions}
+    {#versions}
+        {>named_type_version:./}
+    {/versions}
+{:else}
+    {>named_type_version/}
+{/versions}

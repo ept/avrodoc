@@ -1,0 +1,10 @@
+{?definitions}
+    <p>Defined in:</p>
+    <ul>
+        {#definitions}
+            <li>{filename}</li>
+        {/definitions}
+    </ul>
+{/definitions}
+
+{>named_type_details:./}

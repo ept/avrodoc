@@ -3,6 +3,7 @@ function AvroDoc(input_schemata) {
     var _public = {};
     var list_pane = $('#list-pane'), content_pane = $('#content-pane');
     var schema_by_name = {};
+    var shared_types = {};
 
     // popover_by_name[filename][qualified_name] = {title: 'html', content: 'html'}
     var popover_by_name = {};
@@ -71,16 +72,49 @@ function AvroDoc(input_schemata) {
 
             // Mark the currently displayed type with a 'selected' CSS class in the type list
             list_pane.find('a').filter(function () {
-                return $(this).attr('href') === type.link;
+                return $(this).attr('href') === type.shared_link;
             }).parents('li').addClass('selected');
         }
+    }
+
+    // Returns a mapping from qualified name to shared type. A shared type may have one or more
+    // versions (conflicting definitions for the same qualified name). Each version may have one or
+    // more definitions (equivalent definitions of the same type in different schema files).
+    function typeByQualifiedName() {
+        var by_qualified_name = {};
+        _(shared_types).each(function (versions, qualified_name) {
+            by_qualified_name[qualified_name] = _(versions[0]).clone();
+            by_qualified_name[qualified_name].versions = versions;
+        });
+        return by_qualified_name;
+    }
+
+    // Groups the types defined in all schemas by namespace, and sorts them alphabetically.
+    // A namespace has many named types (records, enums or fixed).
+    function typesByNamespace(by_qualified_name) {
+        var namespaces = {};
+        _(by_qualified_name).each(function (shared_type) {
+            var namespace = shared_type.namespace || '';
+            if (!_(namespaces).has(namespace)) {
+                namespaces[namespace] = {namespace: namespace, types: []};
+            }
+            namespaces[namespace].types.push(shared_type);
+        });
+
+        return _(_(namespaces).sortBy('namespace')).map(function (ns_types) {
+            return {
+                namespace: ns_types.namespace || 'No namespace',
+                types: _(ns_types.types).sortBy('name')
+            };
+        });
     }
 
     // Call this once when the schemata have been loaded and we want to launch the app.
     function ready() {
         // Fields used by the schema_list template
         _public.schemata = _(schema_by_name).values();
-        _public.has_multiple_schemata = (_public.schemata.length > 1);
+        _public.by_qualified_name = typeByQualifiedName();
+        _public.namespaces = typesByNamespace(_public.by_qualified_name);
         renderPopovers();
 
         dust.render('schema_list', _public, function (err, html) {
@@ -91,6 +125,10 @@ function AvroDoc(input_schemata) {
             this.get('#/schema/:filename/:qualified_name', function () {
                 var schema = schema_by_name[this.params.filename];
                 showType(schema && schema.named_types[this.params.qualified_name]);
+            });
+
+            this.get('#/schema/:qualified_name', function () {
+                showType(_public.by_qualified_name[this.params.qualified_name]);
             });
 
             this.get('#/', function () {
@@ -117,7 +155,7 @@ function AvroDoc(input_schemata) {
             filename = filename + i;
         }
 
-        schema_by_name[filename] = AvroDoc.Schema(json, filename);
+        schema_by_name[filename] = AvroDoc.Schema(shared_types, json, filename);
     }
 
 
