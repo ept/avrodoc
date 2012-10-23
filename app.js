@@ -5,11 +5,12 @@ var glob = require('glob');
 var fs = require('fs');
 var content = require('./lib/static_content');
 
+var schema_dir = path.resolve(process.cwd(), process.env.SCHEMA_DIR || 'schemata');
 var schemata = [];
-glob('schemata/**/*.avsc', function (err, files) {
+glob('**/*.avsc', {cwd: schema_dir}, function (err, files) {
     if (err) throw err;
     files.sort().forEach(function (file) {
-        schemata.push({filename: file});
+        schemata.push({filename: '/schemata/' + file});
     });
 });
 
@@ -37,10 +38,13 @@ app.get('/dust-templates.js', function (req, res) {
     res.set('Content-Type', 'text/javascript').send(dust_templates);
 });
 
-app.get(/^\/(schemata(?:\/\w[\w.\-]*)+)$/, function (req, res) {
-    fs.readFile(path.join(__dirname, req.params[0]), 'utf-8', function (err, data) {
-        if (err) throw err;
-        res.set('Content-Type', 'application/json').send(data);
+app.get(/^\/schemata\/(\w[\w.\-]*(?:\/\w[\w.\-]*)*)$/, function (req, res) {
+    fs.readFile(path.join(schema_dir, req.params[0]), 'utf-8', function (err, data) {
+        if (err) {
+            res.status(404).send('Not found');
+        } else {
+            res.set('Content-Type', 'application/json').send(data);
+        }
     });
 });
 
