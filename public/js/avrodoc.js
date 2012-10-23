@@ -160,7 +160,7 @@ function AvroDoc(input_schemata) {
 
 
     // Load any schemata that were specified by filename. When they are loaded, start up the app.
-    var in_progress = 0;
+    var in_progress = 0, schemata_to_load;
 
     input_schemata = input_schemata || [];
     _(input_schemata).each(function (schema) {
@@ -172,13 +172,19 @@ function AvroDoc(input_schemata) {
                 addSchema(json, schema.filename);
                 in_progress--;
                 if (in_progress === 0) {
-                    ready();
+                    content_pane.text('Processing...');
+                    window.setTimeout(ready, 10);
+                } else {
+                    content_pane.text('Loaded ' + (schemata_to_load - in_progress) + ' out of ' +
+                                      schemata_to_load + ' schemata...');
                 }
             });
         } else {
             throw 'You must specify JSON or a filename for a schema';
         }
     });
+
+    schemata_to_load = in_progress;
 
     if (in_progress === 0) {
         ready();

@@ -26,7 +26,9 @@
     <div id="list-pane"></div>
     <div id="container">
       <div id="body">
-        <div id="content-pane"></div>
+        <div id="content-pane">
+          Loading...
+        </div>
       </div>
       <div id="footer">
         <div id="attribution">
