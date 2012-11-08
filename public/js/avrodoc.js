@@ -1,3 +1,8 @@
+// If foo contains markdown, {foo|md|s} renders it to HTML in a Dust template
+dust.filters.md = function (value) {
+    return markdown.toHTML(value);
+};
+
 function AvroDoc(input_schemata) {
 
     var _public = {};

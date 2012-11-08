@@ -1,4 +1,4 @@
-{?doc}<div class="type-doc">{doc}</div>{/doc}
+{?doc}<div class="type-doc">{doc|md|s}</div>{/doc}
 
 {?is_record}
     {?fields}
@@ -16,7 +16,7 @@
                 <tr>
                     <td class="type">{>inline_type:type/}</td>
                     <td class="field">{name}</td>
-                    <td class="field-doc">{doc}</td>
+                    <td class="field-doc">{doc|md|s}</td>
                 </tr>
             {/fields}
             </tbody>

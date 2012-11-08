@@ -19,7 +19,7 @@
                 {filename}
             </td>
             <td class="root-type-doc">
-                {root_type.doc}
+                {root_type.doc|md|s}
             </td>
         </tr>
     {/schemata}
