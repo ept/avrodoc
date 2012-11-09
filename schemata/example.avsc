@@ -2,7 +2,7 @@
   "type": "record",
   "name": "User",
   "namespace": "com.example.avro",
-  "doc": "This is a user record in a fictitious to-do-list management app. It supports arbitrary grouping and nesting of items, and allows you to add items by email or by tweeting.\n\nNote this app doesn't actually exist. The schema is just a demo for Avrodoc!",
+  "doc": "This is a user record in a fictitious to-do-list management app. It supports arbitrary grouping and nesting of items, and allows you to add items by email or by tweeting.\n\nNote this app doesn't actually exist. The schema is just a demo for [Avrodoc](https://github.com/ept/avrodoc)!",
   "fields": [
     {
       "name": "id",
@@ -16,7 +16,7 @@
     },
     {
       "name": "passwordHash",
-      "doc": "The user's password, hashed using scrypt (http://www.tarsnap.com/scrypt.html).",
+      "doc": "The user's password, hashed using [scrypt](http://www.tarsnap.com/scrypt.html).",
       "type": "string"
     },
     {
@@ -32,10 +32,11 @@
         "items": {
           "type": "record",
           "name": "EmailAddress",
+          "doc": "Stores details about an email address that a user has associated with their account.",
           "fields": [
             {
               "name": "address",
-              "doc": "The email address, e.g. foo@example.com",
+              "doc": "The email address, e.g. `foo@example.com`",
               "type": "string"
             },
             {
@@ -66,6 +67,7 @@
         "items": {
           "type": "record",
           "name": "TwitterAccount",
+          "doc": "Stores access credentials for one Twitter account, as granted to us by the user by OAuth.",
           "fields": [
             {
               "name": "status",
@@ -73,7 +75,7 @@
               "type": {
                 "type": "enum",
                 "name": "OAuthStatus",
-                "doc": "PENDING: the user has started authorizing, but not yet finished\nACTIVE: the token should work\nDENIED: the user declined the authorization\nEXPIRED: the token used to work, but now it doesn't\nREVOKED: the user has explicitly revoked the token",
+                "doc": "* `PENDING`: the user has started authorizing, but not yet finished\n* `ACTIVE`: the token should work\n* `DENIED`: the user declined the authorization\n* `EXPIRED`: the token used to work, but now it doesn't\n* `REVOKED`: the user has explicitly revoked the token",
                 "symbols": ["PENDING", "ACTIVE", "DENIED", "EXPIRED", "REVOKED"]
               }
             },
@@ -94,7 +96,7 @@
             },
             {
               "name": "oauthTokenSecret",
-              "doc": "The OAuth secret, used for signing requests on behalf of this Twitter account. null whilst the OAuth flow is not yet complete.",
+              "doc": "The OAuth secret, used for signing requests on behalf of this Twitter account. `null` whilst the OAuth flow is not yet complete.",
               "type": ["null", "string"]
             },
             {
@@ -122,7 +124,7 @@
               "type": {
                 "type": "enum",
                 "name": "ToDoStatus",
-                "doc": "HIDDEN: not currently visible, e.g. because it becomes actionable in future\nACTIONABLE: appears in the current to-do list\nDONE: marked as done, but still appears in the list\nARCHIVED: marked as done and no longer visible\nDELETED: not done and removed from list (preserved for undo purposes)",
+                "doc": "* `HIDDEN`: not currently visible, e.g. because it becomes actionable in future\n* `ACTIONABLE`: appears in the current to-do list\n* `DONE`: marked as done, but still appears in the list\n* `ARCHIVED`: marked as done and no longer visible\n* `DELETED`: not done and removed from list (preserved for undo purposes)",
                 "symbols": ["HIDDEN", "ACTIONABLE", "DONE", "ARCHIVED", "DELETED"]
               }
             },
@@ -138,7 +140,7 @@
             },
             {
               "name": "snoozeDate",
-              "doc": "Timestamp (milliseconds since epoch) at which the item should go from HIDDEN to ACTIONABLE status",
+              "doc": "Timestamp (milliseconds since epoch) at which the item should go from `HIDDEN` to `ACTIONABLE` status",
               "type": ["null", "long"]
             },
             {
