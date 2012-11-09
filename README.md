@@ -4,7 +4,7 @@ Avrodoc
 Avrodoc is a documentation tool for [Avro](http://avro.apache.org/) schemas. It reads schemas in
 Avro's JSON schema format -- `*.avsc` files -- and renders them nicely in a web browser.
 
-Take a look at [the example](http://avrodoc.herokuapp.com/), which is generated from
+Take a look at [the example](http://avrodoc.herokuapp.com/#/), which is generated from
 [this schema](https://github.com/ept/avrodoc/blob/master/schemata/example.avsc).
 
 Why? Because your data type definitions are your most important API... and you would never make an
