@@ -2,23 +2,23 @@
     {#namespaces}
         <li>
             <p class="namespace">{namespace}</p>
-            {?types}
-                <ul>
-                    {#types}
-                        {>schema_list_item:./}
-                    {/types}
-                </ul>
-            {/types}
             {?messages}
-                {?types}
-                    <hr class="navlist" />
-                {/types}
                 <ul>
                     {#messages}
                         {>schema_list_item:./}
                     {/messages}
                 </ul>
             {/messages}
+            {?types}
+                {?messages}
+                    <hr class="navlist" />
+                {/messages}
+                <ul>
+                    {#types}
+                        {>schema_list_item:./}
+                    {/types}
+                </ul>
+            {/types}
         </li>
     {/namespaces}
 </ul>
