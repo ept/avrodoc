@@ -101,15 +101,20 @@ function AvroDoc(input_schemata) {
         _(by_qualified_name).each(function (shared_type) {
             var namespace = shared_type.namespace || '';
             if (!_(namespaces).has(namespace)) {
-                namespaces[namespace] = {namespace: namespace, types: []};
+                namespaces[namespace] = {namespace: namespace, types: [], messages: []};
             }
-            namespaces[namespace].types.push(shared_type);
+            if (shared_type.is_message) {
+                namespaces[namespace].messages.push(shared_type);
+            } else {
+               namespaces[namespace].types.push(shared_type);
+            }
         });
 
         return _(_(namespaces).sortBy('namespace')).map(function (ns_types) {
             return {
                 namespace: ns_types.namespace || 'No namespace',
-                types: _(ns_types.types).sortBy('name')
+                types: _(ns_types.types).sortBy('name'),
+                messages: _(ns_types.messages).sortBy('name')
             };
         });
     }
