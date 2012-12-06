@@ -285,15 +285,18 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
     }
 
     _public.root_type = parseSchema(schema_json);
+    if (schema_json.namespace) {
+        _public.root_namespace = schema_json.namespace;
+    }
     _public.root_type.is_root_type = true;
     parseMessages(schema_json);
     _public.named_types = named_types;
 
-    _public.sorted_types = _(named_types).values().sort(function (type1, type2) {
-        if (type1.name < type2.name) return -1;
-        if (type1.name > type2.name) return +1;
-        return 0;
-    });
+    //_public.sorted_types = _(named_types).values().sort(function (type1, type2) {
+    //    if (type1.name < type2.name) return -1;
+    //    if (type1.name > type2.name) return +1;
+    //    return 0;
+    //});
 
     return _public;
 };

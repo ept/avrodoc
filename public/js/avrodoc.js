@@ -9,6 +9,7 @@ function AvroDoc(input_schemata) {
     var list_pane = $('#list-pane'), content_pane = $('#content-pane');
     var schema_by_name = {};
     var shared_types = {};
+    var current_root_namespace = "";
 
     // popover_by_name[filename][qualified_name] = {title: 'html', content: 'html'}
     var popover_by_name = {};
@@ -98,25 +99,38 @@ function AvroDoc(input_schemata) {
     // A namespace has many named types (records, enums or fixed).
     function typesByNamespace(by_qualified_name) {
         var namespaces = {};
+        var current_order = 0;
         _(by_qualified_name).each(function (shared_type) {
             var namespace = shared_type.namespace || '';
             if (!_(namespaces).has(namespace)) {
-                namespaces[namespace] = {namespace: namespace, types: [], messages: []};
+                var orderForNamespace = current_order;
+                if (namespace === current_root_namespace) {
+                   orderForNamespace = -1;
+                }
+                namespaces[namespace] = {namespace: namespace, order: orderForNamespace, types: [], messages: []};
             }
             if (shared_type.is_message) {
                 namespaces[namespace].messages.push(shared_type);
             } else {
                namespaces[namespace].types.push(shared_type);
             }
+            current_order++;
         });
 
-        return _(_(namespaces).sortBy('namespace')).map(function (ns_types) {
+        return _(_(namespaces).sortBy('order')).map(function (ns_types) {
             return {
                 namespace: ns_types.namespace || 'No namespace',
                 types: _(ns_types.types).sortBy('name'),
                 messages: _(ns_types.messages).sortBy('name')
             };
         });
+    }
+
+    function namespaceSort(type1, type2) {
+        if (type2 === current_root_namespace) return -1;
+        if (type1 < type2) return -1;
+        if (type1 > type2) return +1;
+        return 0;
     }
 
     // Call this once when the schemata have been loaded and we want to launch the app.
@@ -166,6 +180,7 @@ function AvroDoc(input_schemata) {
         }
 
         schema_by_name[filename] = AvroDoc.Schema(shared_types, json, filename);
+        current_root_namespace = schema_by_name[filename].root_namespace;
     }
 
 
