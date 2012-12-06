@@ -2,15 +2,23 @@
     {#namespaces}
         <li>
             <p class="namespace">{namespace}</p>
-            <ul>
-                {#types}
-                    <li><a href="{shared_link}">
-                        <span class="type-name">{name}</span>
-                        {?is_enum} <span class="label">Enum</span> {/is_enum}
-                        {?is_root_type} <span class="label label-info">Root</span> {/is_root_type}
-                    </a></li>
+            {?types}
+                <ul>
+                    {#types}
+                        {>schema_list_item:./}
+                    {/types}
+                </ul>
+            {/types}
+            {?messages}
+                {?types}
+                    <hr class="navlist" />
                 {/types}
-            </ul>
+                <ul>
+                    {#messages}
+                        {>schema_list_item:./}
+                    {/messages}
+                </ul>
+            {/messages}
         </li>
     {/namespaces}
 </ul>
