@@ -5,7 +5,7 @@ var path = require('path'),
     sys = require('util'),
     content = require('../lib/static_content');
 
-var args = process.argv.slice(2); // argv[0] == node, argv[1] == avrodoc
+var args = process.argv.slice(2); // argv[0] == node, argv[1] == avrodoc, node[2] == filename, [node[3] == outputfile]
 if (args.length === 0) {
     sys.error('Usage: avrodoc schema1.avsc [schema2.avsc ...] > avrodoc.html');
     process.exit(1);
@@ -23,11 +23,24 @@ function readJSON(filename) {
     return parsed;
 }
 
-var schemata = args.map(function (filename) {
-    return {json: readJSON(filename), filename: filename};
-});
+var filename = args[0];
+var outputfile = args[1];
+
+var schemata = [{json: readJSON(filename), filename: filename}];
 
 content.topLevelHTML({inline: true, schemata: schemata}, function (err, html) {
-    if (err) throw err;
-    sys.puts(html);
+    if (err) {
+       throw err;
+    }
+    if (outputfile !== null) {
+       fs.writeFile(outputfile, html, function (err) { 
+          if (err) { 
+             throw err; 
+          } else { 
+             console.log('it saved') 
+          } 
+       });
+    } else {
+       sys.puts(html);
+    }
 });
