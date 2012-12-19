@@ -26,8 +26,8 @@ Avrodoc can be used in two modes of operation:
 To run as a command-line tool:
 
     $ npm install avrodoc -g
-    $ avrodoc my-schema.avsc [another-schema.avsc...] > my-documentation.html
-    # open my-documentation.html in a web browser
+    $ node avrodoc --input=schema1.avsc[,schema2.avsc,...][--output=output.html][> output.html] 
+    # open output.html in a web browser
 
 To run as a web app:
 
@@ -43,19 +43,19 @@ want to use a port other than 8124, set the `PORT` environment variable. The app
 to [Heroku](http://www.heroku.com/): add your schema files to the `schemata` directory, commit,
 then run `heroku create && git push heroku master`.
 
-
 Features
---------
+----------
 
 * Excellent for getting an overview of a complex schema with many nested records
 * Support for [Markdown](http://daringfireball.net/projects/markdown/syntax) in doc strings, so you
   can add links, emphasis etc.
 * Detects duplicate definitions of types across schema files, and does the right thing
-
+* Supports Avro 1.4.X IDL transformed schema files
+* Supports redirection of output to a specific file through a command line argument as opposed
+  to STDOUT which may not be appropriate (e.g. in the context of running as a maven build plugin)
 
 Meta
 ----
-
 Copyright 2012 Martin Kleppmann. Licensed under the Apache License, Version 2.0.
 See `LICENSE` for details.
 
