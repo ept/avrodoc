@@ -51,7 +51,7 @@ Features
   can add links, emphasis etc.
 * Detects duplicate definitions of types across schema files, and does the right thing
 * Detects messages in schema files and includes messages as well as types in output
-* Supports Avro 1.4.X IDL transformed schema files
+* Supports up to Avro 1.7.3 IDL transformed schema files
 * Supports redirection of output to a specific file through a command line argument as opposed
   to STDOUT which may not be appropriate (e.g. in the context of running as a maven build plugin)
 
