@@ -4,13 +4,23 @@ var path = require('path'),
     fs = require('fs'),
     sys = require('util'),
     content = require('../lib/static_content');
+var outputFile = null;
+var schemata = [];
 
-var args = process.argv.slice(2); // argv[0] == node, argv[1] == avrodoc, node[2] == filename, [node[3] == outputfile]
-if (args.length === 0) {
-    sys.error('Usage: avrodoc schema1.avsc [schema2.avsc ...] > avrodoc.html');
+// Minimum of 3 arguments are required (arg 1 = node, arg 2 = avrodoc, arg3 = --input)
+if (process.argv.length === 0 || process.argv.length < 3) {
+    sys.error('Incorrect usage of avrodoc');
+    sys.error('');
+    sys.error('Usage: avrodoc --input=schema1.avsc[,schema2.avsc,...][--output=output.html][> output.html]');
+    sys.error('     --input=X       Comma-separated list of avro schema files to parse and output');
+    sys.error('     --output=X       Single file where HTML output will be sent');
+    sys.error('');
+    sys.error('Optionally, output from the script can also be redirected to STDOUT. The output parameter is');
+    sys.error('used in the case that redirecting to STDOUT is not an option (e.g. maven build plugin)');
     process.exit(1);
 }
 
+// Parses the JSON object that is in the provided filename (this will be an Avro schema file)
 function readJSON(filename) {
     var json, parsed;
     json = fs.readFileSync(path.resolve(process.cwd(), filename), 'utf-8');
@@ -23,21 +33,55 @@ function readJSON(filename) {
     return parsed;
 }
 
-var filename = args[0];
-var outputfile = args[1];
+// 
+function getArgumentValue(argument) {
+    if (argument.indexOf("--") != -1)
+    {
+        argument = argument.replace("--", "");
+        // If the = sign is present in the argument, only return everything after = sign
+        // Otherwise, the argument name will just be returned
+        argument = thisArg.substr(thisArg.indexOf("=") + 1)
+    }
+    return argument;
 
-var schemata = [{json: readJSON(filename), filename: filename}];
+}
 
+// Process all arguments passed in on the command line
+// Only care about the input and output parameters if they are set
+for (var i = 0; i < process.argv.length; i++)
+{
+   var thisArg = process.argv[i];
+   if (thisArg.indexOf('--') != -1)
+   {
+      //thisArg = thisArg.replace("--", "");
+      if (thisArg.indexOf("output") != -1)
+      {
+         outputFile = getArgumentValue(thisArg);
+      }
+      else if (thisArg.indexOf("input") != -1)
+      {
+         var files = getArgumentValue(thisArg).split(",");
+         // iterate over all files now
+         for (var j = 0; j < files.length; j++)
+         {
+            schemata[j] = {json: readJSON(files[j]), filename: files[j]};
+         }
+      }
+   }
+}
+
+// Generate the HTML using all provided schemas
+// Output to outputFile if specified, otherwise output to STDOUT
 content.topLevelHTML({inline: true, schemata: schemata}, function (err, html) {
     if (err) {
        throw err;
     }
-    if (outputfile !== null) {
-       fs.writeFile(outputfile, html, function (err) { 
+    if (outputFile !== null) {
+       fs.writeFile(outputFile, html, function (err) { 
           if (err) { 
              throw err; 
           } else { 
-             console.log('it saved') 
+             console.log('File at location ' + outputFile + ' was saved'); 
           } 
        });
     } else {
