@@ -22,7 +22,7 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
     var named_types = {};
 
     var primitive_types = ['null', 'boolean', 'int', 'long', 'float', 'double', 'bytes', 'string'];
-    var complex_types = ['record', 'enum', 'array', 'map', 'union', 'fixed'];
+    var complex_types = ['record', 'enum', 'array', 'map', 'union', 'fixed', 'error'];
     var types = primitive_types.concat(complex_types);
 
     function qualifiedName(schema, namespace) {
@@ -94,7 +94,7 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
         if (_schema.isString()) {
             return schema;
         } else if (_schema.isObject() && !_schema.isArray()) {
-            if (schema.type === 'record' || schema.type === 'enum' || schema.type === 'fixed') {
+            if (schema.type === 'record' || schema.type === 'enum' || schema.type === 'fixed' || schema.type === 'error') {
                 return qualifiedName(schema, namespace);
             } else if (schema.type === 'array') {
                 return {type: 'array', items: extractTypeName(schema.items, namespace)};
@@ -123,7 +123,7 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
     // equality comparison of types.
     function typeEssence(schema) {
         var essence = {type: schema.type, name: qualifiedName(schema, schema.namespace)};
-        if (schema.type === 'record') {
+        if (schema.type === 'record' || schema.type === 'error') {
             essence.fields = _(schema.fields).map(function (field) {
                 return {name: field.name, type: extractTypeName(field.type, schema.namespace)};
             });
@@ -223,9 +223,9 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
         } else if (_schema.isString()) {
             return lookupNamedType(schema, namespace, path);
         } else if (_schema.isObject() && !_schema.isArray()) {
-            if (schema.type === 'record') {
+            if (schema.type === 'record' || schema.type === 'error') {
                 if (!_(schema.fields).isArray()) {
-                    throw 'Unexpected value ' + JSON.stringify(schema.fields) + ' for record fields at ' + path;
+                    throw 'Unexpected value ' + JSON.stringify(schema.fields) + ' for ' + schema.type + ' fields at ' + path;
                 }
                 schema.namespace = schema.namespace || namespace;
                 defineNamedType(schema, path);
