@@ -1,0 +1,100 @@
+{
+  "protocol" : "GitHubTest",
+  "namespace" : "service.githubtest",
+  "types" : [ {
+    "type" : "record",
+    "name" : "DependencyDetail",
+    "namespace" : "service.core",
+    "doc" : "Details about status of a dependency.",
+    "fields" : [ {
+      "name" : "name",
+      "type" : [ "null", "string" ],
+      "doc" : "A short name of the service who's status is being reported",
+      "default" : null
+    }, {
+      "name" : "status",
+      "type" : [ "null", "string" ],
+      "doc" : "A string representing the operational status for this service",
+      "default" : null
+    }, {
+      "name" : "timestamp",
+      "type" : [ "null", "string" ],
+      "doc" : "A timestamp showing the time at which this particular dependency was compiled.",
+      "default" : null
+    } ]
+  }, {
+    "type" : "record",
+    "name" : "ResponseDetail",
+    "namespace" : "service.core",
+    "doc" : "Details about the outcome of the request.",
+    "fields" : [ {
+      "name" : "subCode",
+      "type" : [ "int", "null" ],
+      "doc" : "A secondary response code with greater precision.",
+      "default" : 0
+    }, {
+      "name" : "message",
+      "type" : [ "string", "null" ],
+      "doc" : "A short message describing the response status code (see the strings listing with the response codes).",
+      "default" : ""
+    } ]
+  }, {
+    "type" : "error",
+    "name" : "CustomException",
+    "namespace" : "service.core",
+    "doc" : "A exception that should be for unexpected errors and/or exceptions.",
+    "fields" : [ {
+      "name" : "errorCode",
+      "type" : "int",
+      "doc" : "An error code defined by common.ResponseCode constant"
+    }, {
+      "name" : "msg",
+      "type" : [ "null", "string" ],
+      "doc" : "A short message string such as Error, Success, Exception, etc.",
+      "default" : null
+    }, {
+      "name" : "detail",
+      "type" : [ "null", "string" ],
+      "doc" : "A detailed message string",
+      "default" : null
+    } ]
+  }, {
+    "type" : "record",
+    "name" : "PingResponse",
+    "doc" : "Response from ping request.",
+    "fields" : [ {
+      "name" : "serviceStatus",
+      "type" : [ "null", "string" ],
+      "doc" : "A status string that will indicate either success / failure as to whether the service is currently up and running fully.",
+      "default" : null
+    }, {
+      "name" : "responseCode",
+      "type" : [ "int", "null" ],
+      "doc" : "The status code indicating success, failure and other response statuses.",
+      "default" : 0
+    }, {
+      "name" : "responseDetail",
+      "type" : [ "null", "service.core.ResponseDetail" ],
+      "doc" : "Details about the outcome of the request.",
+      "default" : null
+    }, {
+      "name" : "dependencies",
+      "type" : [ "null", {
+        "type" : "array",
+        "items" : "service.core.DependencyDetail"
+      } ],
+      "doc" : "List of details about all dependencies for this service.",
+      "default" : null
+    } ]
+  } ],
+  "messages" : {
+    "ping" : {
+      "doc" : "Indicates whether this service is available to repsond to requests.",
+      "request" : [ {
+        "name" : "outputDetail",
+        "type" : "boolean"
+      } ],
+      "response" : "PingResponse"
+    }
+  }
+}
