@@ -18,11 +18,11 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
     var _public = {filename: filename};
 
     // {'namespace.name': {type: 'record', fields: [...]}}
-    // containing only types defined in this schema
+    // containing only types and messages defined in this schema
     var named_types = {};
 
     var primitive_types = ['null', 'boolean', 'int', 'long', 'float', 'double', 'bytes', 'string'];
-    var complex_types = ['record', 'enum', 'array', 'map', 'union', 'fixed'];
+    var complex_types = ['record', 'enum', 'array', 'map', 'union', 'fixed', 'error'];
     var types = primitive_types.concat(complex_types);
 
     function qualifiedName(schema, namespace) {
@@ -94,7 +94,7 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
         if (_schema.isString()) {
             return schema;
         } else if (_schema.isObject() && !_schema.isArray()) {
-            if (schema.type === 'record' || schema.type === 'enum' || schema.type === 'fixed') {
+            if (schema.type === 'record' || schema.type === 'enum' || schema.type === 'fixed' || schema.type === 'error') {
                 return qualifiedName(schema, namespace);
             } else if (schema.type === 'array') {
                 return {type: 'array', items: extractTypeName(schema.items, namespace)};
@@ -118,12 +118,12 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
         }
     }
 
-    // Given a JSON object representing a named type (record, enum or fixed), returns a new object
+    // Given a JSON object representing a named type (record, enum, message or fixed), returns a new object
     // containing only fields that are essential to the definition of the type. This is useful for
     // equality comparison of types.
     function typeEssence(schema) {
         var essence = {type: schema.type, name: qualifiedName(schema, schema.namespace)};
-        if (schema.type === 'record') {
+        if (schema.type === 'record' || schema.type === 'error') {
             essence.fields = _(schema.fields).map(function (field) {
                 return {name: field.name, type: extractTypeName(field.type, schema.namespace)};
             });
@@ -131,6 +131,8 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
             essence.symbols = schema.symbols;
         } else if (schema.type === 'fixed') {
             essence.size = schema.size;
+        } else if (schema.type === 'message') {
+            // something needed here?
         } else {
             throw 'typeEssence() only supports named types, not ' + schema.type;
         }
@@ -179,6 +181,41 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
         schema.shared = shared_schema;
     }
 
+    // Decorates a message with some of the basic data that is required and is automatically generated 
+    // for other types of objects. Generates a link for the response object as well as the list of
+    // input parameters. 
+    function decorateMessage(messageName, schemaMessage, namespace) {
+       schemaMessage.type = 'message';
+       schemaMessage.namespace = namespace;
+       schemaMessage.name = messageName;
+       schemaMessage.response = lookupNamedType(schemaMessage.response, namespace);
+       if (schemaMessage.request !== null) {
+          for (var i = 0; i < schemaMessage.request.length; i++) {
+             schemaMessage.request[i].type = lookupNamedType(schemaMessage.request[i].type, namespace);
+          }
+       }
+       schemaMessage = decorate(schemaMessage);
+       return schemaMessage;
+    }
+
+    // Similar to how a top-level schema is parsed out, parse out all messages
+    // in a slightly different manner. This allows for not only the object definitions to
+    // be included in the documentation but also any messages included in the Avro schema.
+    function parseMessages(schema) {
+       var _schema = _(schema);
+       if (_schema.isNull() || _schema.isUndefined()) {
+          throw 'Schema is null in parseMessages';
+       }
+       else if (_schema.isObject() && !_schema.isArray()) {
+          if (schema.messages !== null) {
+             for (var messageName in schema.messages) {
+	        var decoratedMessage = decorateMessage(messageName, schema.messages[messageName], schema.namespace);
+	        defineNamedType(decoratedMessage);
+	     }
+          }
+       }
+    }
+
     function parseSchema(schema, namespace, path) {
         var _schema = _(schema);
         if (_schema.isNull() || _schema.isUndefined()) {
@@ -186,9 +223,9 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
         } else if (_schema.isString()) {
             return lookupNamedType(schema, namespace, path);
         } else if (_schema.isObject() && !_schema.isArray()) {
-            if (schema.type === 'record') {
+            if (schema.type === 'record' || schema.type === 'error') {
                 if (!_(schema.fields).isArray()) {
-                    throw 'Unexpected value ' + JSON.stringify(schema.fields) + ' for record fields at ' + path;
+                    throw 'Unexpected value ' + JSON.stringify(schema.fields) + ' for ' + schema.type + ' fields at ' + path;
                 }
                 schema.namespace = schema.namespace || namespace;
                 defineNamedType(schema, path);
@@ -218,6 +255,8 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
                 return decorate(schema);
             } else if (_(primitive_types).contains(schema.type)) {
                 return decorate(schema);
+            } else if (schema.types !== null) {
+                return parseSchema(schema.types, schema.namespace);
             } else {
                 throw 'Unsupported Avro schema type "' + schema.type + '" at ' + path;
             }
@@ -246,14 +285,18 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
     }
 
     _public.root_type = parseSchema(schema_json);
+    if (schema_json.namespace) {
+        _public.root_namespace = schema_json.namespace;
+    }
     _public.root_type.is_root_type = true;
+    parseMessages(schema_json);
     _public.named_types = named_types;
 
-    _public.sorted_types = _(named_types).values().sort(function (type1, type2) {
-        if (type1.name < type2.name) return -1;
-        if (type1.name > type2.name) return +1;
-        return 0;
-    });
+    //_public.sorted_types = _(named_types).values().sort(function (type1, type2) {
+    //    if (type1.name < type2.name) return -1;
+    //    if (type1.name > type2.name) return +1;
+    //    return 0;
+    //});
 
     return _public;
 };
