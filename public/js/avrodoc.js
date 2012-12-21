@@ -109,7 +109,7 @@ function AvroDoc(input_schemata) {
             if (shared_type.is_message) {
                 namespaces[namespace].messages.push(shared_type);
             } else {
-               namespaces[namespace].types.push(shared_type);
+                namespaces[namespace].types.push(shared_type);
             }
         });
 

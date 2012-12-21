@@ -179,39 +179,36 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
         schema.shared = shared_schema;
     }
 
-    // Decorates a message with some of the basic data that is required and is automatically generated 
+    // Decorates a message with some of the basic data that is required and is automatically generated
     // for other types of objects. Generates a link for the response object as well as the list of
-    // input parameters. 
+    // input parameters.
     function decorateMessage(messageName, schemaMessage, namespace) {
-       schemaMessage.type = 'message';
-       schemaMessage.namespace = namespace;
-       schemaMessage.name = messageName;
-       schemaMessage.response = lookupNamedType(schemaMessage.response, namespace);
-       if (schemaMessage.request !== null) {
-          for (var i = 0; i < schemaMessage.request.length; i++) {
-             schemaMessage.request[i].type = lookupNamedType(schemaMessage.request[i].type, namespace);
-          }
-       }
-       schemaMessage = decorate(schemaMessage);
-       return schemaMessage;
+        schemaMessage.type = 'message';
+        schemaMessage.namespace = namespace;
+        schemaMessage.name = messageName;
+        schemaMessage.response = lookupNamedType(schemaMessage.response, namespace);
+        if (schemaMessage.request) {
+            for (var i = 0; i < schemaMessage.request.length; i++) {
+                schemaMessage.request[i].type = lookupNamedType(schemaMessage.request[i].type, namespace);
+            }
+        }
+        schemaMessage = decorate(schemaMessage);
+        return schemaMessage;
     }
 
     // Similar to how a top-level schema is parsed out, parse out all messages
     // in a slightly different manner. This allows for not only the object definitions to
     // be included in the documentation but also any messages included in the Avro schema.
     function parseMessages(schema) {
-       var _schema = _(schema);
-       if (_schema.isNull() || _schema.isUndefined()) {
-          throw 'Schema is null in parseMessages';
-       }
-       else if (_schema.isObject() && !_schema.isArray()) {
-          if (schema.messages !== null) {
-             for (var messageName in schema.messages) {
-	        var decoratedMessage = decorateMessage(messageName, schema.messages[messageName], schema.namespace);
-	        defineNamedType(decoratedMessage);
-	     }
-          }
-       }
+        var _schema = _(schema);
+        if (_schema.isNull() || _schema.isUndefined()) {
+            throw 'Schema is null in parseMessages';
+        } else if (_schema.isObject() && !_schema.isArray()) {
+            _(schema.messages || {}).each(function (message, messageName) {
+                var decoratedMessage = decorateMessage(messageName, message, schema.namespace);
+                defineNamedType(decoratedMessage);
+            });
+        }
     }
 
     function parseSchema(schema, namespace, path) {
