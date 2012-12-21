@@ -1,3 +1,6 @@
+/*jslint browser:true, jquery:true, unused:false */
+/*global AvroDoc:true, _:false, dust:false, markdown:false, Sammy:false */
+
 // If foo contains markdown, {foo|md|s} renders it to HTML in a Dust template
 dust.filters.md = function (value) {
     return markdown.toHTML(value);

@@ -5,7 +5,8 @@
   "author": "Martin Kleppmann http://martinkl.com/",
   "bin": "./bin/avrodoc",
   "scripts": {
-    "start": "node app"
+    "start": "node app",
+    "pretest": "node node_modules/jshint/bin/hint --config jshint.json app.js lib/*.js public/js/*.js"
   },
   "dependencies": {
     "express": "3.0.0rc5",
@@ -16,6 +17,9 @@
     "less": "1.3.0",
     "underscore": "1.4.2",
     "glob": "3.1.14"
+  },
+  "devDependencies": {
+    "jshint": "0.9.1"
   },
   "engines": {
     "node": "0.8.x",

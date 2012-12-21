@@ -1,3 +1,5 @@
+/*jshint node:true */
+
 var express = require('express');
 var http = require('http');
 var path = require('path');
@@ -19,13 +21,13 @@ var dust_templates = content.dustTemplates();
 
 var app = express();
 
-app.configure(function(){
+app.configure(function () {
     app.set('port', process.env.PORT || 8124);
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(require('less-middleware')({ src: __dirname + '/public' }));
-    app.use(express.static(path.join(__dirname, 'public')));
+    app.use(express['static'](path.join(__dirname, 'public')));
 });
 
 app.get('/', function (req, res) {
@@ -49,5 +51,5 @@ app.get(/^\/schemata\/(\w[\w.\-]*(?:\/\w[\w.\-]*)*)$/, function (req, res) {
 });
 
 http.createServer(app).listen(app.get('port'), function () {
-    console.log("Express server listening on port " + app.get('port'));
+    console.log('Express server listening on port ' + app.get('port'));
 });

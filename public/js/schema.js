@@ -1,4 +1,4 @@
-var AvroDoc = AvroDoc || {};
+/*global AvroDoc:false, _:false */
 
 // Interprets the contents of one Avro Schema (.avsc) file and transforms it into structures
 // suitable for rendering.
@@ -22,8 +22,6 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
     var named_types = {};
 
     var primitive_types = ['null', 'boolean', 'int', 'long', 'float', 'double', 'bytes', 'string'];
-    var complex_types = ['record', 'enum', 'array', 'map', 'union', 'fixed'];
-    var types = primitive_types.concat(complex_types);
 
     function qualifiedName(schema, namespace) {
         var type_name, _schema = _(schema);
