@@ -3,6 +3,8 @@
 // Interprets the contents of one Avro Schema (.avsc) file and transforms it into structures
 // suitable for rendering.
 //
+// avrodoc: The main AvroDoc instance.
+//
 // shared_types: An object of the form
 //      {'namespace.name': [{type: 'record', fields: [...]}, {type: 'record', fields: [...]}, ...], ...}
 //    This object is mutated as the schema is parsed; we add the types defined in this schema to the
@@ -14,7 +16,7 @@
 //
 // filename: The name of the file from which the schema was loaded, if available.
 //
-AvroDoc.Schema = function (shared_types, schema_json, filename) {
+AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
     var _public = {filename: filename};
 
     // {'namespace.name': {type: 'record', fields: [...]}}
@@ -168,12 +170,15 @@ AvroDoc.Schema = function (shared_types, schema_json, filename) {
         } else {
             // Type has not yet been defined in this schema file
             named_types[qualified_name] = schema;
-            if (shared_schema) {
-                shared_schema.definitions.push(schema);
-            } else {
+            if (!shared_schema) {
                 shared_schema = _(schema).clone(); // shallow clone
-                shared_schema.definitions = [schema];
                 shared_types[qualified_name].push(shared_schema);
+            }
+
+            // Only track definitions if we're dealing with multiple input files
+            if (avrodoc.input_schemata.length > 1) {
+                shared_schema.definitions = shared_schema.definitions || [];
+                shared_schema.definitions.push(schema);
             }
         }
         schema.shared = shared_schema;

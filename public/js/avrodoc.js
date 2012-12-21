@@ -168,15 +168,15 @@ function AvroDoc(input_schemata) {
             filename = filename + i;
         }
 
-        schema_by_name[filename] = AvroDoc.Schema(shared_types, json, filename);
+        schema_by_name[filename] = AvroDoc.Schema(_public, shared_types, json, filename);
     }
 
 
     // Load any schemata that were specified by filename. When they are loaded, start up the app.
     var in_progress = 0, schemata_to_load;
 
-    input_schemata = input_schemata || [];
-    _(input_schemata).each(function (schema) {
+    _public.input_schemata = input_schemata || [];
+    _(_public.input_schemata).each(function (schema) {
         if (schema.json) {
             addSchema(schema.json, schema.filename);
         } else if (schema.filename) {
