@@ -1,10 +1,11 @@
 {
-  "protocol" : "GitHubTest",
-  "namespace" : "service.githubtest",
+  "protocol" : "ExampleProtocol",
+  "namespace" : "com.example.service",
+  "doc" : "This is a protocol description for a fictitious network service. It only supports one RPC method, `ping`, which checks the status of the service.",
   "types" : [ {
     "type" : "record",
     "name" : "DependencyDetail",
-    "namespace" : "service.core",
+    "namespace" : "com.example.service",
     "doc" : "Details about status of a dependency.",
     "fields" : [ {
       "name" : "name",
@@ -25,7 +26,7 @@
   }, {
     "type" : "record",
     "name" : "ResponseDetail",
-    "namespace" : "service.core",
+    "namespace" : "com.example.service",
     "doc" : "Details about the outcome of the request.",
     "fields" : [ {
       "name" : "subCode",
@@ -41,7 +42,7 @@
   }, {
     "type" : "error",
     "name" : "CustomException",
-    "namespace" : "service.core",
+    "namespace" : "com.example.service",
     "doc" : "A exception that should be for unexpected errors and/or exceptions.",
     "fields" : [ {
       "name" : "errorCode",
@@ -65,7 +66,7 @@
     "fields" : [ {
       "name" : "serviceStatus",
       "type" : [ "null", "string" ],
-      "doc" : "A status string that will indicate either success / failure as to whether the service is currently up and running fully.",
+      "doc" : "The string `OK` if the service is currently up and running fully. Otherwise the string contains a diagnostic message describing the current error state.",
       "default" : null
     }, {
       "name" : "responseCode",
@@ -74,14 +75,14 @@
       "default" : 0
     }, {
       "name" : "responseDetail",
-      "type" : [ "null", "service.core.ResponseDetail" ],
-      "doc" : "Details about the outcome of the request.",
+      "type" : [ "null", "com.example.service.ResponseDetail" ],
+      "doc" : "Details about the outcome of the request. Set to `null` if the request had `outputDetail == false`.",
       "default" : null
     }, {
       "name" : "dependencies",
       "type" : [ "null", {
         "type" : "array",
-        "items" : "service.core.DependencyDetail"
+        "items" : "com.example.service.DependencyDetail"
       } ],
       "doc" : "List of details about all dependencies for this service.",
       "default" : null
@@ -89,10 +90,11 @@
   } ],
   "messages" : {
     "ping" : {
-      "doc" : "Indicates whether this service is available to repsond to requests.",
+      "doc" : "Indicates whether this service is available to respond to requests.",
       "request" : [ {
         "name" : "outputDetail",
-        "type" : "boolean"
+        "type" : "boolean",
+        "doc" : "`true` if the response should contain additional details in the `responseDetail` field."
       } ],
       "response" : "PingResponse"
     }
