@@ -1,0 +1,22 @@
+<h3>Messages</h3>
+{?sorted_messages}
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {#sorted_messages}
+            <tr>
+                <td class="name"><a href="{link}">{name}</a></td>
+                <td class="message-doc">{doc|md|s}</td>
+            </tr>
+        {/sorted_messages}
+        </tbody>
+    </table>
+{:else}
+    <p>This protocol has no messages.</p>
+{/sorted_messages}

@@ -1,41 +1,11 @@
 {?doc}<div class="type-doc">{doc|md|s}</div>{/doc}
 
 {?is_record}
-    {?fields}
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Field</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-
-            <tbody>
-            {#fields}
-                <tr>
-                    <td class="type">{>inline_type:type/}</td>
-                    <td class="field">{name}</td>
-                    <td class="field-doc">{doc|md|s}</td>
-                </tr>
-            {/fields}
-            </tbody>
-        </table>
-    {:else}
-        <p>This record has no fields.</p>
-    {/fields}
+    {>detail_record/}
 {/is_record}
 
 {?is_enum}
-    {?symbols}
-        <p>Enum symbols:</p>
-        {#symbols}
-            <code>{.}</code>
-            {@sep}, {/sep}
-        {/symbols}
-    {:else}
-        <p>This enum has no symbols.</p>
-    {/symbols}
+    {>detail_enum/}
 {/is_enum}
 
 {?is_fixed}
@@ -43,97 +13,9 @@
 {/is_fixed}
 
 {?is_protocol}
-    <h3>Messages</h3>
-    {?sorted_messages}
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-
-            <tbody>
-            {#sorted_messages}
-                <tr>
-                    <td class="name"><a href="{link}">{name}</a></td>
-                    <td class="message-doc">{doc|md|s}</td>
-                </tr>
-            {/sorted_messages}
-            </tbody>
-        </table>
-    {:else}
-        <p>This protocol has no messages.</p>
-    {/sorted_messages}
+    {>detail_protocol/}
 {/is_protocol}
 
 {?is_message}
-    <h3>Method parameters</h3>
-    {?request}
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Field</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-
-            <tbody>
-            {#request}
-                <tr>
-                    <td class="type">{>inline_type:type/}</td>
-                    <td class="field">{name}</td>
-                    <td class="field-doc">{doc|md|s}</td>
-                </tr>
-            {/request}
-            </tbody>
-        </table>
-    {:else}
-        <p>This record has no parameters.</p>
-    {/request}
-
-    <h3>Return Type</h3>
-    {?response}
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td class="type">{>inline_type:response.shared/}</td>
-                    <td class="field-doc">{response.doc|md|s}</td>
-                </tr>
-            </tbody>
-        </table>
-    {:else}
-        <p>This method returns void.</p>
-    {/response}
-
-    <h3>Errors</h3>
-    {?errors}
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {#errors}
-                <tr>
-                    <td class="type">{>inline_type/}</td>
-                    <td class="field-doc">{doc|md|s}</td>
-                </tr>
-                {/errors}
-            </tbody>
-        </table>
-    {:else}
-        <p>This method does not declare any custom errors.</p>
-    {/errors}
+    {>detail_message/}
 {/is_message}

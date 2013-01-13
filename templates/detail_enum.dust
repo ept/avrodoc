@@ -1,0 +1,9 @@
+{?symbols}
+    <p>Enum symbols:</p>
+    {#symbols}
+        <code>{.}</code>
+        {@sep}, {/sep}
+    {/symbols}
+{:else}
+    <p>This enum has no symbols.</p>
+{/symbols}
