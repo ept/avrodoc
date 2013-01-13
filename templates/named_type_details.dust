@@ -113,4 +113,27 @@
     {:else}
         <p>This method returns void.</p>
     {/response}
+
+    <h3>Errors</h3>
+    {?errors}
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {#errors}
+                <tr>
+                    <td class="type">{>inline_type/}</td>
+                    <td class="field-doc">{doc|md|s}</td>
+                </tr>
+                {/errors}
+            </tbody>
+        </table>
+    {:else}
+        <p>This method does not declare any custom errors.</p>
+    {/errors}
 {/is_message}

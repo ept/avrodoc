@@ -3,5 +3,6 @@
         <span class="type-name">{name}</span>
         {?is_enum} <span class="label">Enum</span> {/is_enum}
         {?is_root_type} <span class="label label-info">Root</span> {/is_root_type}
+        {?is_error} <span class="label">Error</span> {/is_error}
     </a>
 </li>

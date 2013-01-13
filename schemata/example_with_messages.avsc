@@ -96,7 +96,8 @@
         "type" : "boolean",
         "doc" : "`true` if the response should contain additional details in the `responseDetail` field."
       } ],
-      "response" : "PingResponse"
+      "response" : "PingResponse",
+      "errors" : ["CustomException"]
     }
   }
 }
