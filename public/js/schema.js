@@ -52,6 +52,8 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
     function decorate(schema) {
         schema.filename = filename;
         schema['is_' + schema.type] = true;
+        if (schema.is_error) schema.is_record = true;
+
         if (_(primitive_types).contains(schema.type)) {
             schema.is_primitive = true;
         } else {
