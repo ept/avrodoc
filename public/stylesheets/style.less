@@ -43,6 +43,20 @@
   border-right: 1px solid #ddd;
   .box-shadow(0 0 20px #ddd);
 
+  h2 {
+    font-size: @baseFontSize + 2px;
+    line-height: @baseFontSize + 12px;
+    padding: 0 18px;
+    margin: 0;
+    background: #f9f9f9;
+
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    &:first-child {
+      border-top: 0px;
+    }
+  }
+
   ul {
     list-style: none;
     margin: 0;
@@ -51,65 +65,63 @@
   & > ul > li {
     padding: 15px 18px;
 
-    & > a {
+    // General link styling
+    a {
       display: block;
+      font-weight: lighter;
       padding: 4px 0;
       text-decoration: none;
       .text-overflow();
 
-      .root-type {
-        font-size: 125%;
-        font-weight: bold;
-        color: @gray;
-        text-shadow: 0 -1px 0 white;
+      // Don't underline labels on hover
+      &:hover {
+        text-decoration: none;
+        .type-name {
+          text-decoration: underline;
+        }
       }
+    }
 
-      .filename {
+    // Protocol links
+    & > a {
+      .namespace {
         font-size: @smallFontSize;
         font-weight: lighter;
         color: @grayLight;
-        padding-left: 6px;
+        padding-left: 5px;
       }
     }
 
-    & > ul > li {
-      a {
-        display: block;
-        padding: 4px 6px;
-        font-weight: lighter;
+    // Message and named type links
+    & > ul > li > a {
+      padding: 4px 6px;
 
-        .label {
-          margin-left: 4px;
-          font-size: @smallFontSize;
-          text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
-          background-color: fade(@grayLight, 50%);
-          &-info {
-            background-color: fade(@infoText, 50%);
-          }
-        }
-
-        // Don't underline labels on hover
-        &:hover {
-          text-decoration: none;
-          .type-name {
-            text-decoration: underline;
-          }
-          .label {
-            background-color: fade(@grayLight, 80%);
-            &-info {
-              background-color: fade(@infoText, 80%);
-            }
-          }
+      .label {
+        margin-left: 4px;
+        font-size: @smallFontSize;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
+        background-color: fade(@grayLight, 50%);
+        &-info {
+          background-color: fade(@infoText, 50%);
         }
       }
 
-      &.selected {
-        background: white;
-        .box-shadow(0 0 3px #ddd);
-        .border-radius(3px);
+      &:hover .label {
+        background-color: fade(@grayLight, 80%);
+        &-info {
+          background-color: fade(@infoText, 80%);
+        }
       }
     }
   }
+
+  // Highlight on selected links
+  li.selected {
+    background: white;
+    .box-shadow(0 0 3px #ddd);
+    .border-radius(3px);
+  }
+
 
   // If multiple schemata are present in the list, highlight the currently selected one.
   // If there is only one schema, don't bother with the highlight, to reduce visual clutter.

@@ -1,18 +1,33 @@
-<ul>
+{?protocols}
+    <h2>Protocols</h2>
+    <ul class="protocols">
+        {#protocols}
+            <li>
+                <a href="{shared_link}" title="{qualified_name}">
+                    <span class="type-name">{name}</span>
+                    <span class="namespace">{namespace}</span>
+                </a>
+
+                <ul>
+                    {#sorted_messages}
+                        <li>
+                            <a href="{shared_link}" title="{name} message of protocol {protocol_name}">
+                                <span class="type-name">{name}</span>
+                            </a>
+                        </li>
+                    {/sorted_messages}
+                </ul>
+            </li>
+        {/protocols}
+    </ul>
+{/protocols}
+
+<h2>Types</h2>
+<ul class="types">
     {#namespaces}
         <li>
             <p class="namespace">{namespace}</p>
-            {?messages}
-                <ul>
-                    {#messages}
-                        {>schema_list_item:./}
-                    {/messages}
-                </ul>
-            {/messages}
             {?types}
-                {?messages}
-                    <hr class="navlist" />
-                {/messages}
                 <ul>
                     {#types}
                         {>schema_list_item:./}

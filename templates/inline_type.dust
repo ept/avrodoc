@@ -1,3 +1,11 @@
+{?is_protocol}
+    <a href="{link}">{protocol}</a>
+{/is_protocol}
+
+{?is_message}
+    <a href="{link}">{name}</a>
+{/is_message}
+
 {?is_record}
     <a href="{link}">{name}</a>
 {/is_record}

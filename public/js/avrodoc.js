@@ -81,7 +81,7 @@ function AvroDoc(input_schemata) {
             // Mark the currently displayed type with a 'selected' CSS class in the type list
             list_pane.find('a').filter(function () {
                 return $(this).attr('href') === type.shared_link;
-            }).parents('li').addClass('selected');
+            }).closest('li').addClass('selected');
         }
     }
 
@@ -99,16 +99,14 @@ function AvroDoc(input_schemata) {
 
     // Groups the types defined in all schemas by namespace, and sorts them alphabetically.
     // A namespace has many named types (records, enums or fixed).
-    function typesByNamespace(by_qualified_name) {
+    function typesByNamespace() {
         var namespaces = {};
-        _(by_qualified_name).each(function (shared_type) {
-            var namespace = shared_type.namespace || '';
-            if (!_(namespaces).has(namespace)) {
-                namespaces[namespace] = {namespace: namespace, types: [], messages: []};
-            }
-            if (shared_type.is_message) {
-                namespaces[namespace].messages.push(shared_type);
-            } else {
+        _(_public.by_qualified_name).each(function (shared_type) {
+            if (shared_type.is_record || shared_type.is_enum || shared_type.is_fixed) {
+                var namespace = shared_type.namespace || '';
+                if (!_(namespaces).has(namespace)) {
+                    namespaces[namespace] = {namespace: namespace, types: []};
+                }
                 namespaces[namespace].types.push(shared_type);
             }
         });
@@ -116,10 +114,17 @@ function AvroDoc(input_schemata) {
         return _(_(namespaces).sortBy('namespace')).map(function (ns_types) {
             return {
                 namespace: ns_types.namespace || 'No namespace',
-                types: _(ns_types.types).sortBy('name'),
-                messages: _(ns_types.messages).sortBy('name')
+                types: _(ns_types.types).sortBy('name')
             };
         });
+    }
+
+    // Selects all the protocols from all namespaces, and sorts them alphabetically.
+    function protocolsSorted() {
+        var protocols = _(_public.by_qualified_name).filter(function (shared_type) {
+            return shared_type.is_protocol;
+        });
+        return _(protocols).sortBy('qualified_name');
     }
 
     // Call this once when the schemata have been loaded and we want to launch the app.
@@ -127,7 +132,8 @@ function AvroDoc(input_schemata) {
         // Fields used by the schema_list template
         _public.schemata = _(schema_by_name).values();
         _public.by_qualified_name = typeByQualifiedName();
-        _public.namespaces = typesByNamespace(_public.by_qualified_name);
+        _public.namespaces = typesByNamespace();
+        _public.protocols = protocolsSorted();
         renderPopovers();
 
         dust.render('schema_list', _public, function (err, html) {

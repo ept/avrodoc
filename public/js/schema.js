@@ -31,7 +31,7 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
             type_name = schema;
         } else if (_schema.isObject() && !_schema.isArray()) {
             namespace = schema.namespace || namespace;
-            type_name = schema.name || schema.type;
+            type_name = schema.name || schema.protocol || schema.type;
         }
 
         if (!type_name) {
@@ -53,6 +53,7 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
         schema.filename = filename;
         schema['is_' + schema.type] = true;
         if (schema.is_error) schema.is_record = true;
+        schema.qualified_name = qualifiedName(schema);
 
         if (_(primitive_types).contains(schema.type)) {
             schema.is_primitive = true;
@@ -120,31 +121,46 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
         }
     }
 
-    // Given a JSON object representing a named type (record, enum, message or fixed), returns a new object
-    // containing only fields that are essential to the definition of the type. This is useful for
-    // equality comparison of types.
+    // Given a JSON object representing a named type (record, enum, fixed, message or protocol),
+    // returns a new object containing only fields that are essential to the definition of the type.
+    // This is useful for equality comparison of types.
     function typeEssence(schema) {
-        var essence = {type: schema.type, name: qualifiedName(schema, schema.namespace)};
-        if (schema.type === 'record' || schema.type === 'error') {
-            essence.fields = _(schema.fields).map(function (field) {
+        function fieldsWithTypeNames(fields) {
+            return _(fields).map(function (field) {
                 return {name: field.name, type: extractTypeName(field.type, schema.namespace)};
             });
+        }
+
+        var essence = {type: schema.type, name: qualifiedName(schema, schema.namespace)};
+        if (schema.type === 'record' || schema.type === 'error') {
+            essence.fields = fieldsWithTypeNames(schema.fields);
         } else if (schema.type === 'enum') {
             essence.symbols = schema.symbols;
         } else if (schema.type === 'fixed') {
             essence.size = schema.size;
         } else if (schema.type === 'message') {
-            // something needed here?
+            essence.request = fieldsWithTypeNames(schema.request || []);
+            essence.response = extractTypeName(schema.response, schema.namespace);
+            essence.errors = _(schema.errors || []).map(function (error) {
+                return extractTypeName(error, schema.namespace);
+            });
+        } else if (schema.type === 'protocol') {
+            essence = {protocol: qualifiedName(schema, schema.namespace)};
+            essence.types = _(schema.types || []).map(typeEssence);
+            essence.messages = _(schema.messages || {}).reduce(function (memo, message, messageName) {
+                memo[messageName] = typeEssence(message);
+                return memo;
+            }, {});
         } else {
             throw 'typeEssence() only supports named types, not ' + schema.type;
         }
         return essence;
     }
 
-    // Takes a named type (record, enum or fixed) and adds it to the maps of name to type. If a type
-    // with the same qualified name and the same definition is already defined in another schema
-    // file, that existing definition is reused. If the qualified name is not yet defined, or the
-    // existing definitions differ from this type, a new definition is registered.
+    // Takes a named type (record, enum, fixed, message or protocol) and adds it to the maps of name
+    // to type. If a type with the same qualified name and the same definition is already defined in
+    // another schema file, that existing definition is reused. If the qualified name is not yet
+    // defined, or the existing definitions differ from this type, a new definition is registered.
     //
     // Note that within one schema file, a qualified name may only map to one particular definition.
     // However, it is acceptable for different schema files to have conflicting definitions for the
@@ -186,38 +202,8 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
         schema.shared = shared_schema;
     }
 
-    // Decorates a message with some of the basic data that is required and is automatically generated
-    // for other types of objects. Generates a link for the response object as well as the list of
-    // input parameters.
-    function decorateMessage(messageName, schemaMessage, namespace) {
-        schemaMessage.type = 'message';
-        schemaMessage.namespace = namespace;
-        schemaMessage.name = messageName;
-        schemaMessage.response = lookupNamedType(schemaMessage.response, namespace);
-        if (schemaMessage.request) {
-            for (var i = 0; i < schemaMessage.request.length; i++) {
-                schemaMessage.request[i].type = lookupNamedType(schemaMessage.request[i].type, namespace);
-            }
-        }
-        schemaMessage = decorate(schemaMessage);
-        return schemaMessage;
-    }
-
-    // Similar to how a top-level schema is parsed out, parse out all messages
-    // in a slightly different manner. This allows for not only the object definitions to
-    // be included in the documentation but also any messages included in the Avro schema.
-    function parseMessages(schema) {
-        var _schema = _(schema);
-        if (_schema.isNull() || _schema.isUndefined()) {
-            throw 'Schema is null in parseMessages';
-        } else if (_schema.isObject() && !_schema.isArray()) {
-            _(schema.messages || {}).each(function (message, messageName) {
-                var decoratedMessage = decorateMessage(messageName, message, schema.namespace);
-                defineNamedType(decoratedMessage);
-            });
-        }
-    }
-
+    // Parse a plain schema (with a record type at the top level, and any other types defined in
+    // nested structures on the record's fields).
     function parseSchema(schema, namespace, path) {
         var _schema = _(schema);
         if (_schema.isNull() || _schema.isUndefined()) {
@@ -257,8 +243,6 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
                 return decorate(schema);
             } else if (_(primitive_types).contains(schema.type)) {
                 return decorate(schema);
-            } else if (schema.types !== null) {
-                return parseSchema(schema.types, schema.namespace);
             } else {
                 throw 'Unsupported Avro schema type "' + schema.type + '" at ' + path;
             }
@@ -281,14 +265,53 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
         }
     }
 
+    // Parse an Avro protocol, which has a list of messages (RPC calls) and a list of named types
+    // at the top level.
+    function parseProtocol(protocol) {
+        protocol.type = 'protocol';
+        protocol.name = protocol.protocol;
+
+        protocol.types = _(protocol.types || []).map(function (type) {
+            return parseSchema(type, protocol.namespace, 'types');
+        });
+
+        _(protocol.messages || {}).each(function (message, messageName) {
+            var path = 'messages.' + messageName;
+            message.type = 'message';
+            message.name = messageName;
+            message.namespace = protocol.namespace;
+            message.protocol_name = qualifiedName(protocol.name, protocol.namespace);
+
+            _(message.request || []).each(function (param) {
+                param.type = parseSchema(param.type, protocol.namespace, joinPath(path, 'request.' + param.name));
+            });
+            message.response = parseSchema(message.response, protocol.namespace, joinPath(path, 'response'));
+            message.errors = _(message.errors || []).map(function (error) {
+                return parseSchema(error, protocol.namespace, joinPath(path, 'errors'));
+            });
+
+            defineNamedType(message, path);
+            decorate(message);
+        });
+
+        protocol.sorted_messages = _(_(protocol.messages || {}).values()).sortBy('name');
+        defineNamedType(protocol);
+
+        return decorate(protocol);
+    }
+
 
     if (typeof schema_json === 'string') {
         schema_json = JSON.parse(schema_json);
     }
 
-    _public.root_type = parseSchema(schema_json);
+    if (_(schema_json).isObject() && schema_json.protocol) {
+        _public.root_type = parseProtocol(schema_json);
+    } else {
+        _public.root_type = parseSchema(schema_json);
+    }
+
     _public.root_type.is_root_type = true;
-    parseMessages(schema_json);
     _public.named_types = named_types;
 
     _public.sorted_types = _(named_types).values().sort(function (type1, type2) {
