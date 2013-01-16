@@ -3,6 +3,10 @@
   "namespace" : "com.example.service",
   "doc" : "This is a protocol description for a fictitious network service.",
   "types" : [ {
+      "type" : "enum",
+      "name" : "DependencyType",
+      "symbols" : [ "REQUIRED", "OPTIONAL" ]
+    }, {
     "type" : "record",
     "name" : "DependencyDetail",
     "namespace" : "com.example.service",
@@ -29,11 +33,19 @@
       "doc" : "A string representing the operational status for this service",
       "default" : null
     }, {
+      "name" : "dependencyType",
+      "type" : "DependencyType",
+      "doc" : "Indicates what type of dependency this refers to"
+    }, {
       "name" : "timestamp",
       "type" : [ "null", "string" ],
       "doc" : "A timestamp showing the time at which this particular dependency was compiled.",
       "default" : null
     } ]
+  }, {
+    "type" : "enum",
+    "name" : "DependencyType",
+    "symbols" : [ "REQUIRED", "OPTIONAL" ]
   }, {
     "type" : "record",
     "name" : "ResponseDetail",
@@ -105,7 +117,8 @@
       "request" : [ {
         "name" : "outputDetail",
         "type" : "boolean",
-        "doc" : "`true` if the response should contain additional details in the `responseDetail` field."
+        "doc" : "`true` if the response should contain additional details in the `responseDetail` field.",
+        "default" : "false"
       } ],
       "response" : "PingResponse",
       "errors" : ["CustomException"]
