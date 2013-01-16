@@ -13,6 +13,17 @@
       "doc" : "A short name of the service who's status is being reported",
       "default" : null
     }, {
+      "name" : "descendingField",
+      "type" : "string",
+      "doc" : "A descending sort order field",
+      "order" : "descending",
+      "default" : "Default value"
+    }, {
+      "name" : "ignoredField",
+      "type" : "string",
+      "doc" : "An ignored order sort field",
+      "order" : "ignore"
+    }, {
       "name" : "status",
       "type" : [ "null", "string" ],
       "doc" : "A string representing the operational status for this service",
@@ -98,6 +109,12 @@
       } ],
       "response" : "PingResponse",
       "errors" : ["CustomException"]
+    },
+    "logTime" : {
+      "doc" : "Inserts a timestamp into the log file indicating that this service is still alive.",
+      "request" : [ ],
+      "response" : "null",
+      "one-way" : true
     }
   }
 }
