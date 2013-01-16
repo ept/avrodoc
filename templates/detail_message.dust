@@ -5,6 +5,7 @@
             <tr>
                 <th>Type</th>
                 <th>Field</th>
+                <th>Default Value</th>
                 <th>Description</th>
             </tr>
         </thead>
@@ -14,6 +15,13 @@
             <tr>
                 <td class="type">{>inline_type:type/}</td>
                 <td class="field">{name}</td>
+                <td class="field-doc">
+                    {?default}
+                        {default}
+                    {:else}
+                        N/A
+                    {/default}
+                </td>
                 <td class="field-doc">{doc|md|s}</td>
             </tr>
         {/request}
