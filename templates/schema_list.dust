@@ -13,6 +13,7 @@
                         <li>
                             <a href="{shared_link}" title="{name} message of protocol {protocol_name}">
                                 <span class="type-name">{name}</span>
+                                {?one-way} <span class="label">One-Way</span> {/one-way}
                             </a>
                         </li>
                     {/sorted_messages}

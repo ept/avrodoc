@@ -51,6 +51,7 @@ Features
 * Support for [Markdown](http://daringfireball.net/projects/markdown/syntax) in doc strings, so you
   can add links, emphasis etc.
 * Detects duplicate definitions of types across schema files, and does the right thing
+* Fully compatible with Avro IDL 1.7.3
 
 
 Meta
@@ -59,6 +60,6 @@ Meta
 Copyright 2012 Martin Kleppmann. Licensed under the Apache License, Version 2.0.
 See `LICENSE` for details. Thanks to contributors:
 
-* [Micah Huff](https://github.com/mphuff)
+* [Micah Huff](https://github.com/mphuff) ([Inome, Inc.](https://github.com/inome))
 
 Pull requests welcome.
