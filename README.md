@@ -60,7 +60,6 @@ Meta
 Copyright 2012 Martin Kleppmann. Licensed under the Apache License, Version 2.0.
 See `LICENSE` for details. Thanks to contributors:
 
-* [Micah Huff](https://github.com/mphuff)
-* [Inome, Inc.](https://github.com/inome)
+* [Micah Huff](https://github.com/mphuff) ([Inome, Inc.](https://github.com/inome))
 
 Pull requests welcome.
