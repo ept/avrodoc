@@ -1,7 +1,7 @@
 {
   "protocol" : "ExampleProtocol",
   "namespace" : "com.example.service",
-  "doc" : "This is a protocol description for a fictitious network service. It only supports one RPC method, `ping`, which checks the status of the service.",
+  "doc" : "This is a protocol description for a fictitious network service.",
   "types" : [ {
     "type" : "record",
     "name" : "DependencyDetail",
