@@ -1,5 +1,5 @@
-<h3>Method parameters</h3>
 {?request}
+    <h3>Method Parameters</h3>
     <table class="table table-striped table-hover">
         <thead>
             <tr>
@@ -19,12 +19,10 @@
         {/request}
         </tbody>
     </table>
-{:else}
-    <p>This record has no parameters.</p>
 {/request}
 
-<h3>Return Type</h3>
 {?response}
+    <h3>Return Type</h3>
     <table class="table table-striped table-hover">
         <thead>
             <tr>
@@ -40,8 +38,6 @@
             </tr>
         </tbody>
     </table>
-{:else}
-    <p>This method returns void.</p>
 {/response}
 
 {?errors}
