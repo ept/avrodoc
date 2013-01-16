@@ -13,7 +13,7 @@
         {#fields}
             <tr>
                 <td class="type">{>inline_type:type/}</td>
-                <td class="field">{name}</td>
+                <td class="field">{name}{?order} <span class="label">{order}</span>{/order}</td>
                 <td class="field-doc">
                     {?default}
                         {default}
