@@ -11,7 +11,7 @@
         <tbody>
         {#sorted_messages}
             <tr>
-                <td class="name"><a href="{link}">{name}</a></td>
+                <td class="name"><a href="{link}">{name}</a>{?one-way} <span class="label">One-Way</span> {/one-way}</td>
                 <td class="message-doc">{doc|md|s}</td>
             </tr>
         {/sorted_messages}
