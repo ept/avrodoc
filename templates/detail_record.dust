@@ -15,11 +15,11 @@
                 <td class="type">{>inline_type:type/}</td>
                 <td class="field">{name}{?order} <span class="label">{order}</span>{/order}</td>
                 <td class="field-doc">
-                    {?default}
-                        {default}
+                    {?default_str}
+                        {default_str}
                     {:else}
                         N/A
-                    {/default}
+                    {/default_str}
                 </td>
                 <td class="field-doc">{doc|md|s}</td>
             </tr>
