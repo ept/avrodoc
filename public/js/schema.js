@@ -286,6 +286,12 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
                 param.type = parseSchema(param.type, protocol.namespace, joinPath(path, 'request.' + param.name));
             });
             message.response = parseSchema(message.response, protocol.namespace, joinPath(path, 'response'));
+
+            // Return an empty array in the case that the method returns 'void'.
+            // Javadoc specifications do not show return values for a void method
+            if (message.response && message.response.type === 'null') {
+                message.response = [];
+            }
             message.errors = _(message.errors || []).map(function (error) {
                 return parseSchema(error, protocol.namespace, joinPath(path, 'errors'));
             });
