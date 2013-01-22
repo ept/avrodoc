@@ -1,7 +1,7 @@
 {
   "name": "avrodoc",
   "description": "Documentation tool for Avro schemas",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Martin Kleppmann http://martinkl.com/",
   "bin": "./bin/avrodoc",
   "scripts": {
