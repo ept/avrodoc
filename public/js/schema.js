@@ -219,7 +219,7 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
                 defineNamedType(schema, path);
                 _(schema.fields).each(function (field) {
                     field.type = parseSchema(field.type, schema.namespace, joinPath(path, field.name));
-                    field.default_str = JSON.stringify(field.default, null, ' ');
+                    field.default_str = JSON.stringify(field['default'], null, ' ');
                 });
                 return decorate(schema);
             } else if (schema.type === 'enum') {
@@ -285,7 +285,7 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
 
             _(message.request || []).each(function (param) {
                 param.type = parseSchema(param.type, protocol.namespace, joinPath(path, 'request.' + param.name));
-                param.default_str = JSON.stringify(param.default, null, ' ');
+                param.default_str = JSON.stringify(param['default'], null, ' ');
             });
             message.response = parseSchema(message.response, protocol.namespace, joinPath(path, 'response'));
 
