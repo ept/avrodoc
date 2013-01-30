@@ -26,7 +26,7 @@ Avrodoc can be used in two modes of operation:
 To run as a command-line tool:
 
     $ npm install avrodoc -g
-    $ avrodoc my-schema.avsc [another-schema.avsc...] > my-documentation.html
+    $ avrodoc [my-schema.avsc [another-schema.avsc...]] [-o=my-documentation.html] [> my-documentation.html] [-- my-schema.avsc [another-schema.avsc]]
     # open my-documentation.html in a web browser
 
 To run as a web app:
