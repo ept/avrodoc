@@ -3,12 +3,25 @@
 var path = require('path'),
     fs = require('fs'),
     sys = require('util'),
-    content = require('../lib/static_content');
+    content = require('../lib/static_content'),
+    argv = require('optimist').alias('o', 'output').argv;
 
-var args = process.argv.slice(2); // argv[0] == node, argv[1] == avrodoc
-if (args.length === 0) {
-    sys.error('Usage: avrodoc schema1.avsc [schema2.avsc ...] > avrodoc.html');
-    process.exit(1);
+var inputFiles = null;
+var outputFile = null;
+
+// Determine list of input files file1.avsc file2.avsc
+if (argv._) {
+   inputFiles = argv._;
+}
+
+// Determine whether an output file is specified
+if (argv.output) {
+   outputFile = argv.output;
+}
+
+if (inputFiles == null || inputFiles.length === 0) {
+   sys.error('Usage: avrodoc schema1.avsc [schema2.avsc ...] > avrodoc.html');
+   process.exit(1);
 }
 
 function readJSON(filename) {
@@ -23,11 +36,23 @@ function readJSON(filename) {
     return parsed;
 }
 
-var schemata = args.map(function (filename) {
+var schemata = inputFiles.map(function (filename) {
     return {json: readJSON(filename), filename: filename};
 });
 
 content.topLevelHTML({inline: true, schemata: schemata}, function (err, html) {
-    if (err) throw err;
-    sys.puts(html);
+    if (err) {
+       throw err;
+    }
+    if (outputFile != null) {
+       fs.writeFile(outputFile, html, function (err) {
+          if (err) {
+             throw err;
+          } else {
+             console.log('Avrodoc saved to ' + outputFile)
+          }
+       });
+    } else {
+       sys.puts(html);
+    }
 });
