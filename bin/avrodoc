@@ -20,7 +20,7 @@ if (argv.output) {
 }
 
 if (inputFiles == null || inputFiles.length === 0) {
-   sys.error('Usage: avrodoc schema1.avsc [schema2.avsc ...] > avrodoc.html');
+   sys.error('Usage: avrodoc [my-schema.avsc [another-schema.avsc...]] [-o=my-documentation.html] [> my-documentation.html] [-- my-schema.avsc [another-schema.avsc]]');
    process.exit(1);
 }
 
