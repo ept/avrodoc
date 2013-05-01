@@ -1,4 +1,5 @@
 {?fields}
+    <h3>Types</h3>
     <table class="table table-striped table-hover">
         <thead>
             <tr>
@@ -23,3 +24,7 @@
 {:else}
     <p>This record has no fields.</p>
 {/fields}
+
+{?annotations}
+    {>annotations_list:annotations/}
+{/annotations}

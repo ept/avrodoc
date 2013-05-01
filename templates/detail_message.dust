@@ -62,3 +62,7 @@
         </tbody>
     </table>
 {/errors}
+
+{?annotations}
+    {>annotations_list:annotations/}
+{/annotations}
