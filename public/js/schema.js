@@ -26,16 +26,24 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
     var primitive_types = ['null', 'boolean', 'int', 'long', 'float', 'double', 'bytes', 'string'];
 
     var built_in_type_fields = {
-        'record': ['name', 'namespace', 'doc', 'aliases', 'fields'],
-        'error': ['name', 'namespace', 'doc', 'aliases', 'fields'],
-        'message': ['doc', 'request', 'response', 'errors'],
-        'enum': ['name', 'namespace', 'doc', 'aliases', 'symbols'],
-        'array': ['items'],
-        'map': ['values'],
-        'fixed': ['name', 'namespace', 'aliases', 'size'],
-        'field': ['name', 'doc', 'aliases', 'type', 'default', 'order'],
-        'union': ['types']
+        'record': ['type', 'name', 'namespace', 'doc', 'aliases', 'fields'],
+        'error': ['type', 'name', 'namespace', 'doc', 'aliases', 'fields'],
+        'message': ['type', 'name', 'namespace', 'doc', 'request', 'response', 'errors'],
+        'enum': ['type', 'name', 'namespace', 'doc', 'aliases', 'symbols'],
+        'array': ['type', 'items'],
+        'map': ['type', 'values'],
+        'fixed': ['type', 'name', 'namespace', 'aliases', 'size'],
+        'field': ['type', 'name', 'doc', 'aliases', 'type', 'default', 'order'],
+        'protocol': ['type', 'name', 'namespace', 'doc', 'protocol', 'messages', 'types'],
+        'union': ['type', 'types']
     };
+
+    var avrodoc_custom_attributes = [
+        'type', 'shared', 'definitions', 'protocol_name', 'sorted_messages', 
+        'sorted_types', 'filename', 'qualified_name', 'link', 'shared_link', 
+        'is_enum', 'is_message', 'is_record', 'is_protocol', 'is_error', 'is_array', 
+        'is_map', 'is_fixed', 'is_field', 'is_union', 'attributes'
+    ];
 
     function qualifiedName(schema, namespace) {
         var type_name, _schema = _(schema);
@@ -59,9 +67,34 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
         }
     }
 
+    // Check type of object. Get all additional arbitrary attributes on the object
+    // for inclusion in the decorated schema object.
+    function decorateCustomAttributes(schema) {    
+        if (schema.attributes !== undefined && schema.attributes != null) {
+            return schema;
+        }
+
+        custom_attributes = [];
+        if (schema.type !== null && built_in_type_fields.hasOwnProperty(schema.type)) {
+            avrodoc_custom_attributes = avrodoc_custom_attributes.concat(built_in_type_fields[schema.type]);
+        }
+
+        for (var key in schema) {
+            if (avrodoc_custom_attributes.indexOf(key) == -1) {
+                custom_attributes.push({'key': key, 'value': schema[key]});
+            }
+        }
+        if (Object.keys(custom_attributes).length > 0) {
+            schema.attributes = custom_attributes;
+        }
+        return schema;
+
+    }
+
     // Takes a node in the schema tree (a JS object) and adds some fields that are useful for
     // template rendering.
     function decorate(schema) {
+        schema = decorateCustomAttributes(schema);
         schema.filename = filename;
         schema['is_' + schema.type] = true;
         if (schema.is_error) schema.is_record = true;
