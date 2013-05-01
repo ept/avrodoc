@@ -42,7 +42,7 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
         'type', 'shared', 'definitions', 'protocol_name', 'sorted_messages', 
         'sorted_types', 'filename', 'qualified_name', 'link', 'shared_link', 
         'is_enum', 'is_message', 'is_record', 'is_protocol', 'is_error', 'is_array', 
-        'is_map', 'is_fixed', 'is_field', 'is_union', 'attributes'
+        'is_map', 'is_fixed', 'is_field', 'is_union', 'is_primitive', 'attributes'
     ];
 
     function qualifiedName(schema, namespace) {
@@ -81,7 +81,18 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
 
         for (var key in schema) {
             if (avrodoc_custom_attributes.indexOf(key) == -1) {
-                custom_attributes.push({'key': key, 'value': schema[key]});
+                var attribute_data = {'key': key, 'value': schema[key]};
+                var type_from_value = null;
+                try {
+                    if (schema.namespace !== undefined && schema.name !== undefined) {
+                        type_from_value = lookupNamedType(schema.name, schema.namespace, null);
+                    }
+                } catch (err) { }
+                if (type_from_value != null) {
+                    attribute_data['complex'] = true;
+                    attribute_data['value'] = type_from_value;
+                }
+                custom_attributes.push(attribute_data);
             }
         }
         if (Object.keys(custom_attributes).length > 0) {
@@ -94,11 +105,11 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
     // Takes a node in the schema tree (a JS object) and adds some fields that are useful for
     // template rendering.
     function decorate(schema) {
-        schema = decorateCustomAttributes(schema);
         schema.filename = filename;
         schema['is_' + schema.type] = true;
         if (schema.is_error) schema.is_record = true;
         schema.qualified_name = qualifiedName(schema);
+        schema = decorateCustomAttributes(schema);
 
         if (_(primitive_types).contains(schema.type)) {
             schema.is_primitive = true;
