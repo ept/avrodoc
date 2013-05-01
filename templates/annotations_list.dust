@@ -11,11 +11,15 @@
     {#.}
         <tr>
             <td class="type">{key}</td>
-            {#complex}
+            {#linked_type}
                 <td class="field-doc">{>inline_type:./}</td>
             {:else}
-                <td class="field-doc">{value}</td>
-            {/complex}
+                {#complex_object}
+                    <td class="field-doc"><pre>{.}</pre></td>
+                {:else}
+                    <td class="field_doc">{value}</td>
+                {/complex_object}
+            {/linked_type}
         </tr>
     {/.}
     </tbody>
