@@ -42,7 +42,8 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
         'type', 'shared', 'definitions', 'protocol_name', 'sorted_messages', 
         'sorted_types', 'filename', 'qualified_name', 'link', 'shared_link', 
         'is_enum', 'is_message', 'is_record', 'is_protocol', 'is_error', 'is_array', 
-        'is_map', 'is_fixed', 'is_field', 'is_union', 'is_primitive', 'attributes'
+        'is_map', 'is_fixed', 'is_field', 'is_string', 'is_null', 'is_int', 'is_long', 
+        'is_double', 'is_union', 'is_primitive', 'attributes'
     ];
 
     function qualifiedName(schema, namespace) {
@@ -70,33 +71,31 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
     // Check type of object. Get all additional arbitrary attributes on the object
     // for inclusion in the decorated schema object.
     function decorateCustomAttributes(schema) {    
-        if (schema.attributes !== undefined && schema.attributes != null) {
+        if (schema.annotations !== undefined && schema.annotations != null) {
             return schema;
         }
 
-        custom_attributes = [];
+        annotations = [];
         if (schema.type !== null && built_in_type_fields.hasOwnProperty(schema.type)) {
             avrodoc_custom_attributes = avrodoc_custom_attributes.concat(built_in_type_fields[schema.type]);
         }
 
         for (var key in schema) {
             if (avrodoc_custom_attributes.indexOf(key) == -1) {
-                var attribute_data = {'key': key, 'value': schema[key]};
+                var annotation_data = {'key': key, 'value': schema[key]};
+                console.log(schema[key]);
                 var type_from_value = null;
                 try {
-                    if (schema.namespace !== undefined && schema.name !== undefined) {
-                        type_from_value = lookupNamedType(schema.name, schema.namespace, null);
-                    }
+                    type_from_value = lookupNamedTypeByFullyQualifiedName(schema[key], null);
                 } catch (err) { }
-                if (type_from_value != null) {
-                    attribute_data['complex'] = true;
-                    attribute_data['value'] = type_from_value;
+                if (type_from_value != null && type_from_value !== undefined) {
+                    annotation_data['complex'] = type_from_value;
                 }
-                custom_attributes.push(attribute_data);
+                annotations.push(annotation_data);
             }
         }
-        if (Object.keys(custom_attributes).length > 0) {
-            schema.attributes = custom_attributes;
+        if (Object.keys(annotations).length > 0) {
+            schema.annotations = annotations;
         }
         return schema;
 
@@ -128,6 +127,15 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
 
     function joinPath(parent, child) {
         return parent ? [parent, child].join('.') : child;
+    }
+
+    function lookupNamedTypeByFullyQualifiedName(name) {
+        var type = named_types[name];
+        if (type) {
+            return type;
+        } else {
+            throw 'Unknown type name ' + JSON.stringify(name);
+        }
     }
 
     // Given a type name and the current namespace, returns an object representing the type that the
