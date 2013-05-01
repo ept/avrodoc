@@ -25,6 +25,18 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
 
     var primitive_types = ['null', 'boolean', 'int', 'long', 'float', 'double', 'bytes', 'string'];
 
+    var built_in_type_fields = {
+        'record': ['name', 'namespace', 'doc', 'aliases', 'fields'],
+        'error': ['name', 'namespace', 'doc', 'aliases', 'fields'],
+        'message': ['doc', 'request', 'response', 'errors'],
+        'enum': ['name', 'namespace', 'doc', 'aliases', 'symbols'],
+        'array': ['items'],
+        'map': ['values'],
+        'fixed': ['name', 'namespace', 'aliases', 'size'],
+        'field': ['name', 'doc', 'aliases', 'type', 'default', 'order'],
+        'union': ['types']
+    };
+
     function qualifiedName(schema, namespace) {
         var type_name, _schema = _(schema);
         if (_schema.isString()) {
