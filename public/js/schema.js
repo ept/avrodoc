@@ -81,16 +81,31 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
         }
 
         for (var key in schema) {
+            // Only include this annotation if it is not a built-in type or something specific to the avrodoc project
             if (avrodoc_custom_attributes.indexOf(key) == -1) {
-                var annotation_data = {'key': key, 'value': schema[key]};
-                console.log(schema[key]);
+                var annotation_data = {'key': key};
+                var annotation_value = schema[key];
+
+                // Check to see if a complex object was provided. 
+                // In this case, output a pretty-printed JSON blob.
+                if (annotation_value != null && typeof annotation_value === 'object') {
+                    annotation_data['complex_object'] = JSON.stringify(annotation_value, undefined, 3);
+                }
+
+                // Check to see if it is a known complex datatype referenced in the annotation
                 var type_from_value = null;
                 try {
-                    type_from_value = lookupNamedTypeByFullyQualifiedName(schema[key], null);
+                    type_from_value = lookupNamedTypeByFullyQualifiedName(annotation_value, null);
                 } catch (err) { }
                 if (type_from_value != null && type_from_value !== undefined) {
-                    annotation_data['complex'] = type_from_value;
+                    annotation_data['linked_type'] = type_from_value;
                 }
+
+                // If it wasn't a complex JSON object and it wasn't a linked data type, it is just a string
+                if (annotation_data.complex_object === undefined && annotation_data.linked_type === undefined) {
+                    annotation_data['value'] = annotation_value;
+                }
+
                 annotations.push(annotation_data);
             }
         }
