@@ -252,7 +252,7 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
 
         if (_(shared_types).has(qualified_name)) {
             shared_schema = _(shared_types[qualified_name]).find(function (shared_schema) {
-                return _(new_type).isEqual(typeEssence(schema));
+                return _(new_type).isEqual(typeEssence(shared_schema));
             });
         } else {
             shared_types[qualified_name] = [];
