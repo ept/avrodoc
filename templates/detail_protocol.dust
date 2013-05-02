@@ -20,3 +20,7 @@
 {:else}
     <p>This protocol has no messages.</p>
 {/sorted_messages}
+
+{?annotations}
+    {>annotations_list:annotations/}
+{/annotations}

@@ -25,6 +25,27 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
 
     var primitive_types = ['null', 'boolean', 'int', 'long', 'float', 'double', 'bytes', 'string'];
 
+    var built_in_type_fields = {
+        'record': ['type', 'name', 'namespace', 'doc', 'aliases', 'fields'],
+        'error': ['type', 'name', 'namespace', 'doc', 'aliases', 'fields'],
+        'message': ['type', 'name', 'namespace', 'doc', 'request', 'response', 'errors'],
+        'enum': ['type', 'name', 'namespace', 'doc', 'aliases', 'symbols'],
+        'array': ['type', 'items'],
+        'map': ['type', 'values'],
+        'fixed': ['type', 'name', 'namespace', 'aliases', 'size'],
+        'field': ['type', 'name', 'doc', 'aliases', 'type', 'default', 'order'],
+        'protocol': ['type', 'name', 'namespace', 'doc', 'protocol', 'messages', 'types'],
+        'union': ['type', 'types']
+    };
+
+    var avrodoc_custom_attributes = [
+        'type', 'shared', 'definitions', 'protocol_name', 'sorted_messages',
+        'sorted_types', 'filename', 'qualified_name', 'link', 'shared_link',
+        'is_enum', 'is_message', 'is_record', 'is_protocol', 'is_error', 'is_array',
+        'is_map', 'is_fixed', 'is_field', 'is_string', 'is_null', 'is_int', 'is_long',
+        'is_double', 'is_union', 'is_primitive', 'attributes'
+    ];
+
     function qualifiedName(schema, namespace) {
         var type_name, _schema = _(schema);
         if (_schema.isString()) {
@@ -47,6 +68,54 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
         }
     }
 
+    // Check type of object. Get all additional arbitrary attributes on the object
+    // for inclusion in the decorated schema object.
+    function decorateCustomAttributes(schema) {
+        if (schema.annotations !== undefined && schema.annotations !== null) {
+            return schema;
+        }
+
+        var annotations = [];
+        if (schema.type !== null && built_in_type_fields.hasOwnProperty(schema.type)) {
+            avrodoc_custom_attributes = avrodoc_custom_attributes.concat(built_in_type_fields[schema.type]);
+        }
+
+        for (var key in schema) {
+            // Only include this annotation if it is not a built-in type or something specific to the avrodoc project
+            if (avrodoc_custom_attributes.indexOf(key) === -1) {
+                var annotation_data = {'key': key};
+                var annotation_value = schema[key];
+
+                // Check to see if a complex object was provided. 
+                // In this case, output a pretty-printed JSON blob.
+                if (annotation_value !== null && typeof annotation_value === 'object') {
+                    annotation_data.complex_object = JSON.stringify(annotation_value, undefined, 3);
+                }
+
+                // Check to see if it is a known complex datatype referenced in the annotation
+                var type_from_value = null;
+                try {
+                    type_from_value = lookupNamedTypeByFullyQualifiedName(annotation_value, null);
+                } catch (err) { }
+                if (type_from_value !== null && type_from_value !== undefined) {
+                    annotation_data.linked_type = type_from_value;
+                }
+
+                // If it wasn't a complex JSON object and it wasn't a linked data type, it is just a string
+                if (annotation_data.complex_object === undefined && annotation_data.linked_type === undefined) {
+                    annotation_data.value = annotation_value;
+                }
+
+                annotations.push(annotation_data);
+            }
+        }
+        if (Object.keys(annotations).length > 0) {
+            schema.annotations = annotations;
+        }
+        return schema;
+
+    }
+
     // Takes a node in the schema tree (a JS object) and adds some fields that are useful for
     // template rendering.
     function decorate(schema) {
@@ -54,6 +123,7 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
         schema['is_' + schema.type] = true;
         if (schema.is_error) schema.is_record = true;
         schema.qualified_name = qualifiedName(schema);
+        schema = decorateCustomAttributes(schema);
 
         if (_(primitive_types).contains(schema.type)) {
             schema.is_primitive = true;
@@ -72,6 +142,15 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
 
     function joinPath(parent, child) {
         return parent ? [parent, child].join('.') : child;
+    }
+
+    function lookupNamedTypeByFullyQualifiedName(name) {
+        var type = named_types[name];
+        if (type) {
+            return type;
+        } else {
+            throw 'Unknown type name ' + JSON.stringify(name);
+        }
     }
 
     // Given a type name and the current namespace, returns an object representing the type that the
