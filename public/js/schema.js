@@ -39,10 +39,10 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
     };
 
     var avrodoc_custom_attributes = [
-        'type', 'shared', 'definitions', 'protocol_name', 'sorted_messages', 
-        'sorted_types', 'filename', 'qualified_name', 'link', 'shared_link', 
-        'is_enum', 'is_message', 'is_record', 'is_protocol', 'is_error', 'is_array', 
-        'is_map', 'is_fixed', 'is_field', 'is_string', 'is_null', 'is_int', 'is_long', 
+        'type', 'shared', 'definitions', 'protocol_name', 'sorted_messages',
+        'sorted_types', 'filename', 'qualified_name', 'link', 'shared_link',
+        'is_enum', 'is_message', 'is_record', 'is_protocol', 'is_error', 'is_array',
+        'is_map', 'is_fixed', 'is_field', 'is_string', 'is_null', 'is_int', 'is_long',
         'is_double', 'is_union', 'is_primitive', 'attributes'
     ];
 
@@ -70,26 +70,26 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
 
     // Check type of object. Get all additional arbitrary attributes on the object
     // for inclusion in the decorated schema object.
-    function decorateCustomAttributes(schema) {    
-        if (schema.annotations !== undefined && schema.annotations != null) {
+    function decorateCustomAttributes(schema) {
+        if (schema.annotations !== undefined && schema.annotations !== null) {
             return schema;
         }
 
-        annotations = [];
+        var annotations = [];
         if (schema.type !== null && built_in_type_fields.hasOwnProperty(schema.type)) {
             avrodoc_custom_attributes = avrodoc_custom_attributes.concat(built_in_type_fields[schema.type]);
         }
 
         for (var key in schema) {
             // Only include this annotation if it is not a built-in type or something specific to the avrodoc project
-            if (avrodoc_custom_attributes.indexOf(key) == -1) {
+            if (avrodoc_custom_attributes.indexOf(key) === -1) {
                 var annotation_data = {'key': key};
                 var annotation_value = schema[key];
 
                 // Check to see if a complex object was provided. 
                 // In this case, output a pretty-printed JSON blob.
-                if (annotation_value != null && typeof annotation_value === 'object') {
-                    annotation_data['complex_object'] = JSON.stringify(annotation_value, undefined, 3);
+                if (annotation_value !== null && typeof annotation_value === 'object') {
+                    annotation_data.complex_object = JSON.stringify(annotation_value, undefined, 3);
                 }
 
                 // Check to see if it is a known complex datatype referenced in the annotation
@@ -97,13 +97,13 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
                 try {
                     type_from_value = lookupNamedTypeByFullyQualifiedName(annotation_value, null);
                 } catch (err) { }
-                if (type_from_value != null && type_from_value !== undefined) {
-                    annotation_data['linked_type'] = type_from_value;
+                if (type_from_value !== null && type_from_value !== undefined) {
+                    annotation_data.linked_type = type_from_value;
                 }
 
                 // If it wasn't a complex JSON object and it wasn't a linked data type, it is just a string
                 if (annotation_data.complex_object === undefined && annotation_data.linked_type === undefined) {
-                    annotation_data['value'] = annotation_value;
+                    annotation_data.value = annotation_value;
                 }
 
                 annotations.push(annotation_data);
