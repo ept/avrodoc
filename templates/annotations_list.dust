@@ -17,7 +17,7 @@
                 {#complex_object}
                     <td class="field-doc"><pre>{.}</pre></td>
                 {:else}
-                    <td class="field_doc">{value}</td>
+                    <td class="field-doc">{value}</td>
                 {/complex_object}
             {/linked_type}
         </tr>
