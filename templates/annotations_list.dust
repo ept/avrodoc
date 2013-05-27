@@ -1,0 +1,26 @@
+<h3>Annotations</h3>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Annotation</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {#.}
+        <tr>
+            <td class="type">{key}</td>
+            {#linked_type}
+                <td class="field-doc">{>inline_type:./}</td>
+            {:else}
+                {#complex_object}
+                    <td class="field-doc"><pre>{.}</pre></td>
+                {:else}
+                    <td class="field-doc">{value}</td>
+                {/complex_object}
+            {/linked_type}
+        </tr>
+    {/.}
+    </tbody>
+</table>

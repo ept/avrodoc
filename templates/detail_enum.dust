@@ -7,3 +7,7 @@
 {:else}
     <p>This enum has no symbols.</p>
 {/symbols}
+
+{?annotations}
+    {>annotations_list:annotations/}
+{/annotations}
