@@ -3,5 +3,14 @@ node_js:
   - "0.11"
   - "0.10"
   - "0.8"
+
 before_script:
   - npm install -g grunt-cli
+  - test/sauce_connect.sh
+
+env:
+  global:
+    # SAUCE_USERNAME
+    - secure: "QcLskIdAZlRQrwz1zuraw1X4bKYSHoKzxNyyNxs+yOc03j1fEKw2iMrhjzND\ndPEj4dSdzQPUjqUum+E4srDCRDLW1Le4Xz5CziQLtf+RddXrAi6tyCbpOPZl\nHxnqfFKKLcDCaGLLskg8bEclLnCdFXH9eI3Gw/jmn+0TdXraWKk="
+    # SAUCE_ACCESS_KEY
+    - secure: "FTsFtLvqYcCHGsCwPeUlIKaa9s55hF2L5cdyTGQFvOOQ8OhWHTXhSPdUxJRO\nGwVVITiztl2Id69BzgUFSaD7LYnbYx1F/rLo8p1IGe3is6+6uCSXz3oPwKIW\n/e7ifpRF4hyuXLt2Ykwb4unG8UrKR8qH5XlqxsbXs36aSob3lzU="

@@ -54,6 +54,27 @@ Features
 * Fully compatible with Avro IDL 1.7.3
 
 
+Testing
+-------
+
+To run the browser tests locally on your machine:
+
+1. Download the [ChromeDriver server](https://code.google.com/p/chromedriver/downloads/list) for
+   your OS, and put it in your `$PATH`.
+2. Download the standalone [Selenium server](https://code.google.com/p/selenium/downloads/list).
+3. Run Selenium server: `java -jar selenium-server-standalone-$VERSION.jar`
+4. Run the Avrodoc web app: `node app`
+5. Run the tests: `grunt selenium`
+
+To run the browser tests remotely in the cloud:
+
+1. Sign up for a free account at [Sauce Labs](https://saucelabs.com/).
+2. Download [Sauce Connect](https://saucelabs.com/docs/connect).
+3. Run Sauce Connect, providing the username and API key of your account:
+   `java -jar Sauce-Connect.jar -P 4444 $USERNAME $API_KEY`.
+4. Run the Avrodoc web app: `node app`
+5. Run the tests: `grunt selenium`
+
 Meta
 ----
 
