@@ -86,7 +86,7 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
                 var annotation_data = {'key': key};
                 var annotation_value = schema[key];
 
-                // Check to see if a complex object was provided. 
+                // Check to see if a complex object was provided.
                 // In this case, output a pretty-printed JSON blob.
                 if (annotation_value !== null && typeof annotation_value === 'object') {
                     annotation_data.complex_object = JSON.stringify(annotation_value, undefined, 3);
@@ -113,7 +113,6 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
             schema.annotations = annotations;
         }
         return schema;
-
     }
 
     // Takes a node in the schema tree (a JS object) and adds some fields that are useful for
