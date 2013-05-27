@@ -75,14 +75,14 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
             return schema;
         }
 
-        var annotations = [];
+        var annotations = [], ignore_attributes = avrodoc_custom_attributes;
         if (schema.type !== null && built_in_type_fields.hasOwnProperty(schema.type)) {
-            avrodoc_custom_attributes = avrodoc_custom_attributes.concat(built_in_type_fields[schema.type]);
+            ignore_attributes = ignore_attributes.concat(built_in_type_fields[schema.type]);
         }
 
         for (var key in schema) {
             // Only include this annotation if it is not a built-in type or something specific to the avrodoc project
-            if (avrodoc_custom_attributes.indexOf(key) === -1) {
+            if (ignore_attributes.indexOf(key) === -1) {
                 var annotation_data = {'key': key};
                 var annotation_value = schema[key];
 
