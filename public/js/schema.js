@@ -93,12 +93,8 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
                 }
 
                 // Check to see if it is a known complex datatype referenced in the annotation
-                var type_from_value = null;
-                try {
-                    type_from_value = lookupNamedTypeByFullyQualifiedName(annotation_value, null);
-                } catch (err) { }
-                if (type_from_value !== null && type_from_value !== undefined) {
-                    annotation_data.linked_type = type_from_value;
+                if (named_types[annotation_value]) {
+                    annotation_data.linked_type = named_types[annotation_value];
                 }
 
                 // If it wasn't a complex JSON object and it wasn't a linked data type, it is just a string
@@ -141,15 +137,6 @@ AvroDoc.Schema = function (avrodoc, shared_types, schema_json, filename) {
 
     function joinPath(parent, child) {
         return parent ? [parent, child].join('.') : child;
-    }
-
-    function lookupNamedTypeByFullyQualifiedName(name) {
-        var type = named_types[name];
-        if (type) {
-            return type;
-        } else {
-            throw 'Unknown type name ' + JSON.stringify(name);
-        }
     }
 
     // Given a type name and the current namespace, returns an object representing the type that the
