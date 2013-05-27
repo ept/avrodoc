@@ -1,6 +1,10 @@
 Changelog
 =========
 
+Version 0.4.0 (not yet released)
+
+* If any custom attributes/annotations appear in the schema, show them in the documentation (mphuff)
+
 Version 0.3.0 (2012-01-30)
 
 * Added -o/--output command-line argument as alternative to redirecting stdout (mphuff)
