@@ -1,5 +1,5 @@
 {?fields}
-    <h3>Types</h3>
+    <h3>Fields</h3>
     <table class="table table-striped table-hover">
         <thead>
             <tr>
