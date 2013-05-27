@@ -41,7 +41,8 @@
       "type" : [ "null", "string" ],
       "doc" : "A timestamp showing the time at which this particular dependency was compiled.",
       "default" : null
-    } ]
+    } ],
+    "enumerationType": "com.example.service.DependencyType"
   }, {
     "type" : "enum",
     "name" : "DependencyType",
@@ -121,7 +122,8 @@
         "default" : "false"
       } ],
       "response" : "PingResponse",
-      "errors" : ["CustomException"]
+      "errors" : ["CustomException"],
+      "messageAttribute": {"addedBy": "inome, inc", "date": "01 May 2013"}
     },
     "logTime" : {
       "doc" : "Inserts a timestamp into the log file indicating that this service is still alive.",
