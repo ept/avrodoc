@@ -6,7 +6,7 @@
   "bin": "./bin/avrodoc",
   "scripts": {
     "start": "node app",
-    "pretest": "node node_modules/jshint/bin/hint --config jshint.json app.js lib/*.js public/js/*.js"
+    "test": "grunt"
   },
   "dependencies": {
     "express": "3.0.0rc5",
@@ -20,7 +20,8 @@
     "optimist": "0.3.5"
   },
   "devDependencies": {
-    "jshint": "0.9.1"
+    "grunt": "0.4.1",
+    "grunt-contrib-jshint": "0.5.4"
   },
   "engines": {
     "node": "0.8.x",
