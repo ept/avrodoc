@@ -48,7 +48,7 @@ function AvroDoc(input_schemata) {
 
             $(this).popover({
                 trigger: 'hover',
-                placement: 'bottom',
+                placement: 'right',
                 title: function () { return popover.title; },
                 content: function () { return popover.content; },
                 delay: {show: 200, hide: 50},
