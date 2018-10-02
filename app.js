@@ -50,6 +50,24 @@ app.get(/^\/schemata\/(\w[\w.\-]*(?:\/\w[\w.\-]*)*)$/, function (req, res) {
     });
 });
 
-http.createServer(app).listen(app.get('port'), function () {
+var server = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
+});
+
+var signals = {
+    'SIGINT': 2,
+    'SIGTERM': 15
+};
+
+function shutdown(signal, value) {
+    server.close(function () {
+        console.log('Express server stopped by ' + signal);
+        process.exit(128 + value);
+    });
+}
+
+Object.keys(signals).forEach(function (signal) {
+    process.on(signal, function () {
+        shutdown(signal, signals[signal]);
+    });
 });
