@@ -38,6 +38,10 @@ To run as a web app:
     $ node app
     # open http://localhost:8124/ in a web browser
 
+To run as a container:
+    $ docker build -t avrodoc .
+    $ docker run -d -p 3000:8124 avrodoc
+
 If you want to change the schema file directory, set the `SCHEMA_DIR` environment variable. If you
 want to use a port other than 8124, set the `PORT` environment variable. The app is ready to deploy
 to [Heroku](http://www.heroku.com/): add your schema files to the `schemata` directory, commit,
